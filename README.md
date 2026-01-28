@@ -39,7 +39,7 @@ Tämä projekti on henkilökohtainen sivuprojektini, jonka tavoitteena on:
 ---
 
 ## Projektin rakenne (suunnitelma)
-
+```
 /kids-clock
 ├── App.tsx # Sovelluksen pääkomponentti
 ├── components/ # UI-komponentit (kellotaulu, sektorit, viisari)
@@ -47,5 +47,5 @@ Tämä projekti on henkilökohtainen sivuprojektini, jonka tavoitteena on:
 ├── types/ # TypeScript-tyypit
 ├── assets/ # Kuvat, fontit, ikonit
 └── README.md
-
+```
 ---

@@ -1,17 +1,38 @@
-const sleepStart = 20;
-const sleepEnd = (sleepStart + 8);
+import { settings } from "./settings";
+import { Sector } from "../types/types";
 
-export const clockConfig = {
+export const clockLayout = {
     cx: 100,
     cy: 100,
-    r: 100,
-    sectors: {
-        sleep: { sleepStart, sleepEnd, color: "red" },
-    }
+    r: 98,
 };
 
+export const dailySectors: Sector[] = [
+    {
+        visible: settings.sleep.visible,
+        name: "sleep",
+        start: settings.sleep.start,
+        end: settings.sleep.end,
+        color: "red"
+    },
+    {
+        visible: settings.school.visible,
+        name: "school",
+        start: settings.school.start,
+        end: settings.school.end,
+        color: "yellow"
+    },
+    {
+        visible: settings.hobby.visible,
+        name: "hobby",
+        start: settings.hobby.start,
+        end: settings.hobby.end,
+        color: "blue"
+    },
+]
+
 export const getSectorPath = (startHour: number, endHour: number) => {
-    const { cx, cy, r } = clockConfig;
+    const { cx, cy, r } = clockLayout;
 
     const startAngle = ((startHour % 12) / 12) * 2 * Math.PI - Math.PI/2;
     const endAngle   = ((endHour % 12) / 12) * 2 * Math.PI - Math.PI/2;
@@ -26,4 +47,24 @@ export const getSectorPath = (startHour: number, endHour: number) => {
     const sweepFlag = 1;
 
     return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArcFlag} ${sweepFlag} ${x2} ${y2} Z`;
+};
+
+export const splitSectorForClock = (sector: Sector, isAM: boolean) => {
+    const start = sector.start;
+    const end = sector.end;
+
+    const result: Sector[] = [];
+
+    if (start < end) {
+        if (isAM && end <= 12) result.push(sector);
+        if (!isAM && start >= 12) result.push(sector);
+    } else {
+        if (isAM) {
+            if (end > 0) result.push({ ...sector, start: 0, end: Math.min(end, 12) });
+        } else {
+            if (start < 24) result.push({ ...sector, start: Math.max(start, 12), end: 24 });
+        }
+    }
+
+    return result;
 };

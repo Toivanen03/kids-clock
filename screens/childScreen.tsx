@@ -1,38 +1,25 @@
-import { FC, useState, useEffect } from 'react';
-import AnalogAM from '../components/AnalogAMClock';
-import AnalogPM from '../components/AnalogPMClock';
+import { FC } from "react";
+import AnalogClock from "../components/AnalogClock";
+import { ChildScreenProps } from "../types/types";
+import { dailySectors, splitSectorForClock } from "../utils/constants";
+import { useClock } from "../hooks/useClock";
 
-const ChildScreen: FC = () => {
-    const now = new Date();
-    const [AMactive, setAMactive] = useState(now.getHours() < 12);
-
-    const [time, setTime] = useState({
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        AMactive: AMactive,
+const ChildScreen: FC<ChildScreenProps> = ({ test, speed }) => {
+    const { now, time, isAM } = useClock({
+        test,
+        speed,
     });
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            const now = new Date();
-            setTime({
-                hours: now.getHours(),
-                minutes: now.getMinutes(),
-                seconds: now.getSeconds(),
-                AMactive
-            });
-
-            if (now.getHours() >= 12) setAMactive(false)
-        }, 1000);
-        return () => clearInterval(interval);
-    }, []);
+    const sectorsToRender = dailySectors.flatMap(s =>
+        splitSectorForClock(s, now, isAM)
+    );
 
     return (
-        <>
-            <AnalogAM time={time} />
-            <AnalogPM time={time} />
-        </>
+        <AnalogClock
+            time={time}
+            sectorsToRender={sectorsToRender}
+            isAM={isAM}
+        />
     );
 };
 

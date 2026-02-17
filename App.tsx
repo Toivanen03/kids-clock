@@ -1,12 +1,16 @@
-import ChildScreen from "./screens/childScreen";
+import ChildScreen from "./screens/ChildScreen";
 import { StatusBar } from "expo-status-bar";
 
-export default function App() {
+const App = () => {
+    const test = true;
+    const speed = 7200;
 
   return (
     <>
-      <ChildScreen />
+      <ChildScreen speed={speed} test={test} />
       <StatusBar style="auto" />
     </>
   );
 };
+
+export default App;

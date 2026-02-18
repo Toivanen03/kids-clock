@@ -1,16 +1,20 @@
-import { FC } from "react";
-import { View } from "react-native";
+import { FC, useState } from "react";
+import { View, Pressable } from "react-native";
 import { styles } from "../styles";
 import Svg, { Circle, Path } from 'react-native-svg';
-import { clockLayout, getSectorPath } from "../utils/constants";
+import { clockLayout, getSectorPath, dailySectors } from "../utils/constants";
 import AnalogClockNumbers from "./AnalogClockNumbers";
 import ClockHands from "./ClockHands";
 import { settings } from "../utils/settings";
 import { AnalogClockProps } from "../types/types"
 import { clockHeader } from "./ClockHeader";
 import type { Sector } from "../types/types";
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 
 const AnalogClock: FC<AnalogClockProps> = ({ time, sectorsToRender, isAM }) => {
+    const [preview, setPreview] = useState(false);
+    const [secondaryView, setSecondaryView] = useState(false);
     const [amEvents, pmEvents]: Array<Sector[]> = sectorsToRender.reduce<[Sector[], Sector[]]>(
         (a, s) => {
             if (s.start < 12) {
@@ -22,15 +26,29 @@ const AnalogClock: FC<AnalogClockProps> = ({ time, sectorsToRender, isAM }) => {
         [[], []]
     );
 
-    const events: Sector[] = isAM ? amEvents : pmEvents;
+    const tomorrowEvents: Sector[] = dailySectors.filter(s => s.start < 12);
+
+    let events: Sector[];
+
+    if (!preview) {
+        events = isAM ? amEvents : pmEvents;
+    } else {
+        events = isAM ? pmEvents : tomorrowEvents;
+    }
+
+    const icon = preview
+        ? (isAM ? faSun : faMoon)
+        : (isAM ? faMoon : faSun);
 
     return (
         <>
-        {clockHeader(
+        {clockHeader(!secondaryView ? (
             `${isAM ? "Aamu" : "Ilta"} ${time.hours}:${time.minutes
                 .toString()
                 .padStart(2, "0")}`
-            )}
+            ) : (
+                isAM && preview ? "Ilta" : "Huominen"
+            ))}
             <View style={styles.container}>
                 <Svg height="100%" width="95%" viewBox="0 0 200 200">
                     <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="#eee" />
@@ -44,11 +62,18 @@ const AnalogClock: FC<AnalogClockProps> = ({ time, sectorsToRender, isAM }) => {
                     {settings.analogNumbers && <AnalogClockNumbers />}
                     
                     {(settings.hourHand || settings.minuteHand || settings.secondHand) && (
-                        <ClockHands time={time} active={true} />
+                        <ClockHands time={time} active={!secondaryView} />
                     )}
                 </Svg>
-            </View>
 
+                <Pressable
+                    onPressIn={() => { setPreview(true); setSecondaryView(true); }}
+                    onPressOut={() => { setPreview(false); setSecondaryView(false) }}
+                    style={styles.previewButton}
+                >
+                    <FontAwesomeIcon icon={icon} size={50} color="white" />
+                </Pressable>
+            </View>
         </>
     );
 };

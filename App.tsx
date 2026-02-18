@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 
 const App = () => {
     const test = true;
-    const speed = 7200;
+    const speed = 2000;
 
   return (
     <>

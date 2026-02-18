@@ -66,8 +66,9 @@ export const splitSectorForClock = ( sector: Sector, now: Date, isAM: boolean ) 
     if (!sector.visible) return [];
 
     if (pastMidnight) {
+        const sleepStart = !onGoing && !finished ? currentHour : 0;
         const part1 = { ...sector, start: onGoing ? currentHour : sector.start, end: 24 };
-        const part2 = { ...sector, start: !onGoing && !finished ? currentHour : 0, end: sector.end };
+        const part2 = { ...sector, start: sleepStart, end: sector.end };
 
         return !finished && isAM ? [part2] : [part1];
     }
@@ -78,7 +79,8 @@ export const splitSectorForClock = ( sector: Sector, now: Date, isAM: boolean ) 
 
     if (upComing) {
         if (middayEvent) {
-            return [{ ...sector, start: sector.start, end: 12 }];
+            const adjustedEnd = Math.min(currentHour + 12, sector.end);
+            return [{ ...sector, start: sector.start, end: adjustedEnd }];
         }
         return [sector];
     }

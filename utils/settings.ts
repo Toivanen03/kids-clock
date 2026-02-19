@@ -23,4 +23,9 @@ export const settings: Settings = {
         start: toDecimalHours({ hours: 17, minutes: 45 }),
         end: toDecimalHours({ hours: 19, minutes: 0 }),
     },
+    breakfast: {
+        visible: true,
+        start: toDecimalHours({ hours: 7, minutes: 0 }),
+        end: toDecimalHours({ hours: 7, minutes: 30 }),
+    },
 };

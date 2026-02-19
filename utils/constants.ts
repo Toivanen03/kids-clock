@@ -29,7 +29,14 @@ export const dailySectors: Sector[] = [
         end: settings.hobby.end,
         color: "blue"
     },
-]
+    {
+        visible: settings.breakfast.visible,
+        name: "breakfast",
+        start: settings.breakfast.start,
+        end: settings.breakfast.end,
+        color: "pink"
+    },
+];
 
 export const getSectorPath = (startHour: number, endHour: number) => {
     const { cx, cy, r } = clockLayout;
@@ -49,22 +56,35 @@ export const getSectorPath = (startHour: number, endHour: number) => {
     return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArcFlag} ${sweepFlag} ${x2} ${y2} Z`;
 };
 
-export const splitSectorForClock = (sector: Sector, isAM: boolean) => {
-    const start = sector.start;
-    const end = sector.end;
+export const splitSectorForClock = ( sector: Sector, now: Date, isAM: boolean, preview: boolean ) => {
+    const currentHour = now.getHours() + now.getMinutes() / 60;
+    const pastMidnight = sector.end <= sector.start;
+    const onGoing = sector.start < currentHour;
+    const finished = sector.end < currentHour;
+    const middayEvent = sector.start <= 12 && sector.end > 12;
 
-    const result: Sector[] = [];
+    if (!sector.visible) return [];
 
-    if (start < end) {
-        if (isAM && end <= 12) result.push(sector);
-        if (!isAM && start >= 12) result.push(sector);
-    } else {
-        if (isAM) {
-            if (end > 0) result.push({ ...sector, start: 0, end: Math.min(end, 12) });
-        } else {
-            if (start < 24) result.push({ ...sector, start: Math.max(start, 12), end: 24 });
-        }
+    if (pastMidnight) {
+        const sleepStart = !onGoing && !finished ? currentHour : 0;
+        const part1 = { ...sector, start: onGoing ? currentHour : sector.start, end: 24 };
+        const part2 = { ...sector, start: sleepStart, end: sector.end };
+
+        if (preview) return [part1];
+        return !finished && isAM ? [part2] : [part1];
     }
 
-    return result;
+    const upComing = currentHour < sector.start;
+
+    if (finished) return [];
+
+    if (upComing) {
+        if (middayEvent) {
+            const adjustedEnd = Math.min(currentHour + 12, sector.end);
+            return [{ ...sector, start: sector.start, end: adjustedEnd }];
+        }
+        return [sector];
+    }
+
+    return [{ ...sector, start: currentHour, end: sector.end }];
 };

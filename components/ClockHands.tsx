@@ -4,7 +4,7 @@ import { clockLayout } from "../utils/constants";
 import { settings } from "../utils/settings";
 import { ClockHandsProps } from "../types/types";
 
-const ClockHands: FC<ClockHandsProps> = ({ time }) => {
+const ClockHands: FC<ClockHandsProps> = ({ time, active }) => {
     const cx = clockLayout.cx;
     const cy = clockLayout.cy;
 
@@ -12,9 +12,11 @@ const ClockHands: FC<ClockHandsProps> = ({ time }) => {
     const minuteValue = time.minutes;
     const secondsValue = time.seconds;
 
-    const hourAngle = ((hourValue % 12 + minuteValue / 60) / 12) * 2 * Math.PI - Math.PI / 2;
-    const minuteAngle = ((minuteValue % 60 + secondsValue / 60) / 60) * 2 * Math.PI - Math.PI / 2;
-    const secondsAngle = ((minuteValue % 60 + secondsValue / 60)) * 2 * Math.PI - Math.PI / 2;
+    const offset = Math.PI / 2
+
+    const hourAngle = active ? (((hourValue % 12 + minuteValue / 60) / 12) * 2 * Math.PI - offset) : 0 - offset;
+    const minuteAngle = active ? (((minuteValue % 60 + secondsValue / 60) / 60) * 2 * Math.PI - offset) : 0 - offset;
+    const secondsAngle = active ? (((minuteValue % 60 + secondsValue / 60)) * 2 * Math.PI - offset) : 0 - offset;
 
     const hourLength = clockLayout.r * 0.5;
     const minuteLength = hourLength * 1.4;

@@ -1,10 +1,12 @@
 import { FC } from "react";
 import { Line } from "react-native-svg";
 import { clockLayout } from "../utils/constants";
-import { settings } from "../utils/settings";
 import { ClockHandsProps } from "../types/types";
+import { useSettings } from "../hooks/useSettings";
 
 const ClockHands: FC<ClockHandsProps> = ({ time, active }) => {
+    const { settings } = useSettings();
+
     const cx = clockLayout.cx;
     const cy = clockLayout.cy;
 

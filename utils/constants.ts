@@ -1,4 +1,3 @@
-import { settings } from "./settings";
 import { Sector } from "../types/types";
 
 export const clockLayout = {
@@ -6,37 +5,6 @@ export const clockLayout = {
     cy: 100,
     r: 98,
 };
-
-export const dailySectors: Sector[] = [
-    {
-        visible: settings.sleep.visible,
-        name: "sleep",
-        start: settings.sleep.start,
-        end: settings.sleep.end,
-        color: "red"
-    },
-    {
-        visible: settings.school.visible,
-        name: "school",
-        start: settings.school.start,
-        end: settings.school.end,
-        color: "yellow"
-    },
-    {
-        visible: settings.hobby.visible,
-        name: "hobby",
-        start: settings.hobby.start,
-        end: settings.hobby.end,
-        color: "blue"
-    },
-    {
-        visible: settings.breakfast.visible,
-        name: "breakfast",
-        start: settings.breakfast.start,
-        end: settings.breakfast.end,
-        color: "pink"
-    },
-];
 
 export const getSectorPath = (startHour: number, endHour: number) => {
     const { cx, cy, r } = clockLayout;
@@ -60,6 +28,7 @@ export const splitSectorForClock = ( sector: Sector, now: Date, isAM: boolean, p
     const currentHour = now.getHours() + now.getMinutes() / 60;
     const pastMidnight = sector.end <= sector.start;
     const onGoing = sector.start < currentHour;
+    const upComing = currentHour < sector.start;
     const finished = sector.end < currentHour;
     const middayEvent = sector.start <= 12 && sector.end > 12;
 
@@ -74,8 +43,6 @@ export const splitSectorForClock = ( sector: Sector, now: Date, isAM: boolean, p
         return !finished && isAM ? [part2] : [part1];
     }
 
-    const upComing = currentHour < sector.start;
-
     if (finished) return [];
 
     if (upComing) {
@@ -83,6 +50,7 @@ export const splitSectorForClock = ( sector: Sector, now: Date, isAM: boolean, p
             const adjustedEnd = Math.min(currentHour + 12, sector.end);
             return [{ ...sector, start: sector.start, end: adjustedEnd }];
         }
+
         return [sector];
     }
 

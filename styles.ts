@@ -24,9 +24,16 @@ export const styles = StyleSheet.create({
 
   settingsScreen: {
     flex: 1,
+    padding: 20,
+    flexDirection: 'column',
     backgroundColor: '#ccc',
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+
+  settingsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
 
   header: {

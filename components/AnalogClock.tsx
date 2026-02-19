@@ -2,19 +2,22 @@ import { useState } from "react";
 import { View, Pressable } from "react-native";
 import { styles } from "../styles";
 import Svg, { Circle, Path } from 'react-native-svg';
-import { clockLayout, getSectorPath, dailySectors, splitSectorForClock } from "../utils/constants";
+import { clockLayout, getSectorPath, splitSectorForClock } from "../utils/constants";
 import AnalogClockNumbers from "./AnalogClockNumbers";
 import ClockHands from "./ClockHands";
-import { settings } from "../utils/settings";
 import { AnalogClockProps } from "../types/types"
 import { clockHeader } from "./ClockHeader";
 import type { Sector } from "../types/types";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
+import { useSettings } from "../hooks/useSettings";
+
 
 const AnalogClock = ({ time, now, isAM }: AnalogClockProps) => {
     const [preview, setPreview] = useState(false);
     const [secondaryView, setSecondaryView] = useState(false);
+    const { sectors, settings } = useSettings();
+    const dailySectors: Sector[] = sectors;
 
     const sectorsToRender = dailySectors.flatMap(s =>
         splitSectorForClock(s, now, isAM, preview)

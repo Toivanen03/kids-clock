@@ -10,8 +10,8 @@ Tämä projekti on henkilökohtainen sivuprojektini, jonka tavoitteena on:
 - Opettaa lapsille kellonajan hahmottamista visuaalisesti käyttämällä värillisiä sektoreita eri aktiviteeteille.
   - 🔴 Uni
   - 🟡 Koulu
-  - 🔵 Ruoka
-  - 🟢 Leikki
+  - 🔵 Harrastus
+  - 🟢 Syöminen
 - Sovelluksesta on valittavissa oppimisen edetessä:
   1. Värisektorit ja tuntiviisari
   2. Minuuttiviisari

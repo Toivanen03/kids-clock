@@ -1,3 +1,9 @@
+import { ReactNode } from "react";
+
+export interface Props {
+    children: ReactNode;
+}
+
 export type Time = {
     hours: number;
     minutes: number;
@@ -11,11 +17,21 @@ export type Settings = {
     hourHand: boolean;
     minuteHand: boolean;
     secondHand: boolean;
-    sleep: { visible: boolean; start: number; end: number };
-    school: { visible: boolean; start: number; end: number };
-    hobby: { visible: boolean; start: number; end: number };
-    breakfast: { visible: boolean; start: number; end: number };
 };
+
+export interface SettingsContextType {
+    secondHand: boolean;
+    setSecondHand: (val: boolean) => void;
+    minuteHand: boolean;
+    setMinuteHand: (val: boolean) => void;
+    hourHand: boolean;
+    setHourHand: (val: boolean) => void;
+    numbers: boolean;
+    setNumbers: (val: boolean) => void;
+    sectors: Sector[];
+    setSectors: (val: Sector[]) => void;
+    settings: Settings
+}
 
 export type Sector = {
     visible: boolean;
@@ -25,7 +41,7 @@ export type Sector = {
     color: string;
 };
 
-export interface ClockHandsProps {
+export interface  ClockHandsProps {
     time: Time;
     active: boolean;
 };

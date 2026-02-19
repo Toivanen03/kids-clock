@@ -1,13 +1,12 @@
-import { View, Text } from "react-native";
-import { FC } from "react";
+import { Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { styles } from "../styles";
 
-
-
-const SettingsScreen: FC = () => {
+const SettingsScreen = () => {
     return (
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <SafeAreaView style={styles.settingsScreen}>
             <Text>Asetukset</Text>
-        </View>
+        </SafeAreaView>
     );
 }
 

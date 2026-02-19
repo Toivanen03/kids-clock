@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import type { Time, UseClockOptions } from "../types/types";
+import type { Time, UseClockOptions, UseClockReturn } from "../types/types";
 
-export const useClock = ({ test, speed }: UseClockOptions) => {
+export const useClock = (args: UseClockOptions): UseClockReturn => {
     const [currentDate, setCurrentDate] = useState(new Date());
+    const {test, speed} = args;
 
     useEffect(() => {
         const interval = setInterval(() => {

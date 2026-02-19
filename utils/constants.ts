@@ -56,7 +56,7 @@ export const getSectorPath = (startHour: number, endHour: number) => {
     return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArcFlag} ${sweepFlag} ${x2} ${y2} Z`;
 };
 
-export const splitSectorForClock = ( sector: Sector, now: Date, isAM: boolean ) => {
+export const splitSectorForClock = ( sector: Sector, now: Date, isAM: boolean, preview: boolean ) => {
     const currentHour = now.getHours() + now.getMinutes() / 60;
     const pastMidnight = sector.end <= sector.start;
     const onGoing = sector.start < currentHour;
@@ -70,6 +70,7 @@ export const splitSectorForClock = ( sector: Sector, now: Date, isAM: boolean ) 
         const part1 = { ...sector, start: onGoing ? currentHour : sector.start, end: 24 };
         const part2 = { ...sector, start: sleepStart, end: sector.end };
 
+        if (preview) return [part1];
         return !finished && isAM ? [part2] : [part1];
     }
 

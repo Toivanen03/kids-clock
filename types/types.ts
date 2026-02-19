@@ -32,7 +32,7 @@ export interface ClockHandsProps {
 
 export interface AnalogClockProps {
     time: Time;
-    sectorsToRender: Sector[];
+    now: Date,
     isAM: boolean;
 };
 
@@ -44,4 +44,14 @@ export interface ChildScreenProps {
 export type UseClockOptions = {
     test: boolean;
     speed: number;
+};
+
+export type UseClockReturn = {
+    now: Date;
+    time: {
+        hours: number;
+        minutes: number;
+        seconds: number;
+    };
+    isAM: boolean;
 };

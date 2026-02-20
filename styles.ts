@@ -56,4 +56,39 @@ export const styles = StyleSheet.create({
     width: 'auto',
     height: 'auto'
   },
+
+  lockButton: {
+    padding: '6%',
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ff7070',
+    borderRadius: 10,
+    width: '50%',
+    height: 'auto'
+  },
+
+  pinContainer: {
+    marginTop: 100,
+    alignSelf: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: 220,
+  },
+  box: {
+    width: 50,
+    height: 60,
+    borderWidth: 1,
+    borderColor: "#333",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  text: {
+    fontSize: 24,
+  },
+  hiddenInput: {
+    position: "absolute",
+    opacity: 0,
+  },
 });

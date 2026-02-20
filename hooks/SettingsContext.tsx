@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import { SettingsContextType, Props } from '../types/types';
 import { toDecimalHours } from '../utils/timeConversion';
 import type { Sector, Settings } from '../types/types';
@@ -6,18 +6,30 @@ import type { Sector, Settings } from '../types/types';
 export const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export const SettingsProvider = ({ children }: Props) => {
-  const [secondHand, setSecondHand] = useState(false);
-  const [minuteHand, setMinuteHand] = useState(false);
-  const [hourHand, setHourHand] = useState(false);
-  const [numbers, setNumbers] = useState(false);
+  const [secondHand, setSecondHand] = useState(true);
+  const [minuteHand, setMinuteHand] = useState(true);
+  const [hourHand, setHourHand] = useState(true);
+  const [numbers, setNumbers] = useState(true);
 
   const [pin, setPin] = useState(1234);
-  const [digitalClock, setDigitalClock] = useState(true);
+  const [timeToLockdown] = useState(60);
+  const [locked, setLocked] = useState(true);
+  const [easyClock, setEasyClock] = useState(true);
+
+  useEffect(() => {
+    if (easyClock) {
+      setHourHand(false);
+      setMinuteHand(false);
+    } else {
+      setHourHand(true);
+      setMinuteHand(true);
+    };
+  }, [easyClock]);
 
   const settings: Settings = {
-    pin: 1234,
+    pin: pin,
     analogNumbers: numbers,
-    digitalClock: true,
+    easyClock: easyClock,
     hourHand: hourHand,
     minuteHand: minuteHand,
     secondHand: secondHand,
@@ -69,7 +81,10 @@ export const SettingsProvider = ({ children }: Props) => {
       hourHand, setHourHand,
       numbers, setNumbers,
       sectors, setSectors,
-      settings
+      easyClock, setEasyClock,
+      locked, setLocked,
+      settings, timeToLockdown,
+      pin, setPin
     }}>
       {children}
     </SettingsContext.Provider>

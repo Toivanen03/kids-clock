@@ -35,7 +35,7 @@ const ClockHands: FC<ClockHandsProps> = ({ time, active }) => {
 
     return (
         <>
-            {settings.hourHand &&
+            {settings.hourHand && !settings.easyClock &&
                 <>
                     <Line
                         x1={cx}
@@ -59,7 +59,7 @@ const ClockHands: FC<ClockHandsProps> = ({ time, active }) => {
                 </>
             }
 
-            {settings.minuteHand &&
+            {settings.minuteHand && !settings.easyClock &&
                 <>
                     <Line
                         x1={cx}

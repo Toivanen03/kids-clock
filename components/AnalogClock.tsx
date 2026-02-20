@@ -11,6 +11,7 @@ import type { Sector } from "../types/types";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { useSettings } from "../hooks/useSettings";
+import EasyClock from "./EasyClock";
 
 
 const AnalogClock = ({ time, now, isAM }: AnalogClockProps) => {
@@ -56,42 +57,48 @@ const AnalogClock = ({ time, now, isAM }: AnalogClockProps) => {
         : (isAM ? faMoon : faSun);
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                {clockHeader(!secondaryView ? (
-                    `${isAM ? "Aamu" : "Ilta"} ${time.hours}:${time.minutes
-                        .toString()
-                        .padStart(2, "0")}`
-                    ) : (
-                        isAM && preview ? "Ilta" : "Huominen"
-                    ))}
-            </View>
+        <>
+            {!settings.easyClock ? (
+                <View style={styles.container}>
+                    <View style={styles.header}>
+                        {clockHeader(!secondaryView ? (
+                            `${isAM ? "Aamu" : "Ilta"} ${time.hours}:${time.minutes
+                                .toString()
+                                .padStart(2, "0")}`
+                            ) : (
+                                isAM && preview ? "Ilta" : "Huominen"
+                            ))}
+                    </View>
 
-            <Svg height="80%" width="95%" viewBox="0 0 200 200">
-                <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="#eee" />
+                    <Svg height="80%" width="95%" viewBox="0 0 200 200">
+                        <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="#eee" />
 
-                {events.map((s, i) => (
-                    <Path key={i} d={getSectorPath(s.start, s.end)} fill={s.color} />
-                ))}
+                        {events.map((s, i) => (
+                            <Path key={i} d={getSectorPath(s.start, s.end)} fill={s.color} />
+                        ))}
 
-                <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="none" stroke="#333" strokeWidth={3} />
+                        <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="none" stroke="#333" strokeWidth={3} />
 
-                {settings.analogNumbers && <AnalogClockNumbers />}
-                
-                {(settings.hourHand || settings.minuteHand || settings.secondHand) && (
-                    <ClockHands time={time} active={!secondaryView} />
-                )}
-            </Svg>
+                        {settings.analogNumbers && <AnalogClockNumbers />}
+                        
+                        {(settings.hourHand || settings.minuteHand || settings.secondHand) && (
+                            <ClockHands time={time} active={!secondaryView} />
+                        )}
+                    </Svg>
 
-            <View style={styles.previewButton}>
-                <Pressable
-                    onPressIn={() => { setPreview(true); setSecondaryView(true); }}
-                    onPressOut={() => { setPreview(false); setSecondaryView(false) }}
-                >
-                    <FontAwesomeIcon icon={icon} size={50} color="white" />
-                </Pressable>
-            </View>
-        </View>
+                    <View style={styles.previewButton}>
+                        <Pressable
+                            onPressIn={() => { setPreview(true); setSecondaryView(true); }}
+                            onPressOut={() => { setPreview(false); setSecondaryView(false) }}
+                        >
+                            <FontAwesomeIcon icon={icon} size={50} color="white" />
+                        </Pressable>
+                    </View>
+                </View>
+            ) : (
+                <EasyClock time={time} now={now} isAM={isAM} events={events} />
+            )}
+        </>
     );
 };
 

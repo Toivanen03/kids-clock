@@ -5,12 +5,13 @@ import ChildScreen from './screens/childScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import { styles } from './styles';
 import { SettingsProvider } from './hooks/SettingsContext';
+import ConfirmPin from './screens/ConfirmPin';
 
 const Tab = createMaterialTopTabNavigator();
 
 export default function App() {
   const test = false;
-  const speed = 3600;
+  const speed = 36000 / 24;
 
   return (
     <SafeAreaProvider>
@@ -28,7 +29,7 @@ export default function App() {
               <Tab.Screen name="Kello">
                 {() => <ChildScreen test={test} speed={speed} />}
               </Tab.Screen>
-              <Tab.Screen name="Asetukset" component={SettingsScreen} />
+              <Tab.Screen name="Asetukset" component={ConfirmPin} />
             </Tab.Navigator>
           </SettingsProvider>
         </SafeAreaView>

@@ -13,7 +13,7 @@ export type Time = {
 export type Settings = {
     pin: number;
     analogNumbers: boolean;
-    digitalClock: boolean;
+    easyClock: boolean;
     hourHand: boolean;
     minuteHand: boolean;
     secondHand: boolean;
@@ -30,7 +30,14 @@ export interface SettingsContextType {
     setNumbers: (val: boolean) => void;
     sectors: Sector[];
     setSectors: (val: Sector[]) => void;
-    settings: Settings
+    easyClock: boolean;
+    setEasyClock: (val: boolean) => void;
+    pin: number;
+    setPin: (val: number) => void;
+    locked: boolean;
+    setLocked: (val: boolean) => void;
+    settings: Settings;
+    timeToLockdown: number;
 }
 
 export type Sector = {
@@ -52,6 +59,16 @@ export interface AnalogClockProps {
     isAM: boolean;
 };
 
+export interface EasyClockProps {
+    time: Time;
+    now: Date,
+    isAM: boolean;
+    events: Sector[];
+};
+
+export interface AnalogNumberProps {
+    rotation?: number;
+}
 export interface ChildScreenProps {
     test: boolean;
     speed: number;

@@ -58,14 +58,15 @@ export const styles = StyleSheet.create({
   },
 
   lockButton: {
-    padding: '6%',
-    alignSelf: 'center',
+    padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#ff7070',
     borderRadius: 10,
-    width: '50%',
-    height: 'auto'
+    width: '45%',
+    height: 'auto',
+    borderWidth: 1,
+    borderColor: 'black',
   },
 
   pinContainer: {

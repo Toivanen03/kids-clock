@@ -3,7 +3,7 @@ import { ChildScreenProps } from "../types/types";
 import { useClock } from "../hooks/useClock";
 
 const ChildScreen = ({ test, speed }: ChildScreenProps) => {
-    const { now, time, isAM } = useClock({
+    const { now, time, isAM, currentWeekday } = useClock({
         test,
         speed,
     });
@@ -13,6 +13,7 @@ const ChildScreen = ({ test, speed }: ChildScreenProps) => {
             time={time}
             now={now}
             isAM={isAM}
+            currentWeekday={currentWeekday}
         />
     );
 };

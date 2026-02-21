@@ -14,7 +14,7 @@ import { useSettings } from "../hooks/useSettings";
 import EasyClock from "./EasyClock";
 
 
-const AnalogClock = ({ time, now, isAM }: AnalogClockProps) => {
+const AnalogClock = ({ time, now, isAM, currentWeekday }: AnalogClockProps) => {
     const [preview, setPreview] = useState(false);
     const [secondaryView, setSecondaryView] = useState(false);
     const { sectors, settings } = useSettings();
@@ -96,7 +96,7 @@ const AnalogClock = ({ time, now, isAM }: AnalogClockProps) => {
                     </View>
                 </View>
             ) : (
-                <EasyClock time={time} now={now} isAM={isAM} events={events} />
+                <EasyClock time={time} now={now} isAM={isAM} events={events} currentWeekday={currentWeekday} />
             )}
         </>
     );

@@ -12,8 +12,9 @@ export const SettingsProvider = ({ children }: Props) => {
   const [numbers, setNumbers] = useState(true);
 
   const [pin, setPin] = useState(1234);
-  const [timeToLockdown] = useState(60);
+  const [timeToLockdown] = useState(30);
   const [locked, setLocked] = useState(true);
+  const [autoLock, setAutoLock] = useState(false);
   const [easyClock, setEasyClock] = useState(true);
 
   useEffect(() => {
@@ -84,6 +85,7 @@ export const SettingsProvider = ({ children }: Props) => {
       easyClock, setEasyClock,
       locked, setLocked,
       settings, timeToLockdown,
+      autoLock, setAutoLock,
       pin, setPin
     }}>
       {children}

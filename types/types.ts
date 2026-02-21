@@ -1,5 +1,18 @@
 import { ReactNode } from "react";
 
+export const weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
+export type Weekday = typeof weekdays[number];
+
+export const WEEKDAY_LABELS: Record<Weekday, string> = {
+    mon: "Maanantai",
+    tue: "Tiistai",
+    wed: "Keskiviikko",
+    thu: "Torstai",
+    fri: "Perjantai",
+    sat: "Lauantai",
+    sun: "Sunnuntai",
+};
+
 export interface Props {
     children: ReactNode;
 }
@@ -38,6 +51,8 @@ export interface SettingsContextType {
     setLocked: (val: boolean) => void;
     settings: Settings;
     timeToLockdown: number;
+    autoLock: boolean;
+    setAutoLock: (val: boolean) => void;
 }
 
 export type Sector = {
@@ -57,6 +72,7 @@ export interface AnalogClockProps {
     time: Time;
     now: Date,
     isAM: boolean;
+    currentWeekday: Weekday;
 };
 
 export interface EasyClockProps {
@@ -64,6 +80,7 @@ export interface EasyClockProps {
     now: Date,
     isAM: boolean;
     events: Sector[];
+    currentWeekday: Weekday;
 };
 
 export interface AnalogNumberProps {
@@ -87,4 +104,5 @@ export type UseClockReturn = {
         seconds: number;
     };
     isAM: boolean;
+    currentWeekday: Weekday;
 };

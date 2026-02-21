@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import type { Time, UseClockOptions, UseClockReturn } from "../types/types";
+import type { Time, UseClockOptions, UseClockReturn, Weekday } from "../types/types";
+import { weekdays } from "../types/types";
 
 export const useClock = (args: UseClockOptions): UseClockReturn => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const {test, speed} = args;
+    const currentWeekday: Weekday = weekdays[currentDate.getDay()];
 
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentDate(prev => {
                 if (test) {
-                return new Date(prev.getTime() + 1000 * speed);
+                    return new Date(prev.getTime() + 1000 * speed);
                 }
                 return new Date();
             });
@@ -28,5 +30,6 @@ export const useClock = (args: UseClockOptions): UseClockReturn => {
         now: currentDate,
         time,
         isAM: time.hours < 12,
+        currentWeekday
     };
 };

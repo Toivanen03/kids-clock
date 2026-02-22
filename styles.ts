@@ -9,6 +9,55 @@ export const styles = StyleSheet.create({
     paddingVertical: 15
   },
 
+  topContainer: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'center',
+    padding: 10
+  },
+
+  addSectorTopBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    height: 50,
+    paddingHorizontal: 16,
+  },
+
+  bottomContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff'
+  },
+
+  addSectorClockContainer: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  addSectorAMbuttonContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  backButtonContainer: {
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: '50%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10
+  },
+
   navigatorBg: {
     backgroundColor: '#ccc'
   },

@@ -56,6 +56,7 @@ export interface SettingsContextType {
 }
 
 export type Sector = {
+    id: number;
     visible: boolean;
     name: string;
     start: number;
@@ -95,6 +96,10 @@ export type UseClockOptions = {
     test: boolean;
     speed: number;
 };
+
+export interface AddSectorProps {
+    setShowSectors: (val: boolean) => void;
+}
 
 export type UseClockReturn = {
     now: Date;

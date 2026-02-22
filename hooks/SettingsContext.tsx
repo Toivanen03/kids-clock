@@ -39,39 +39,44 @@ export const SettingsProvider = ({ children }: Props) => {
 
   const [sectors, setSectors] = useState<Sector[]>([
     {
-        visible: true,
-        name: "sleep",
-        start: toDecimalHours({ hours: 20, minutes: 0}),
-        end: toDecimalHours({ hours: 6, minutes: 30 }),
-        color: "red"
+      id: 1,
+      visible: true,
+      name: "sleep",
+      start: toDecimalHours({ hours: 20, minutes: 0}),
+      end: toDecimalHours({ hours: 6, minutes: 30 }),
+      color: "red"
     },
     {
-        visible: true,
-        name: "school",
-        start: toDecimalHours({ hours: 8, minutes: 0 }),
-        end: toDecimalHours({ hours: 13, minutes: 15 }),
-        color: "yellow"
+      id: 2,
+      visible: true,
+      name: "school",
+      start: toDecimalHours({ hours: 8, minutes: 0 }),
+      end: toDecimalHours({ hours: 13, minutes: 15 }),
+      color: "yellow"
     },
     {
-        visible: true,
-        name: "hobby",
-        start: toDecimalHours({ hours: 17, minutes: 45 }),
-        end: toDecimalHours({ hours: 19, minutes: 0 }),
-        color: "blue"
+      id: 3,
+      visible: true,
+      name: "hobby",
+      start: toDecimalHours({ hours: 17, minutes: 45 }),
+      end: toDecimalHours({ hours: 19, minutes: 0 }),
+      color: "blue"
     },
     {
-        visible: true,
-        name: "breakfast",
-        start: toDecimalHours({ hours: 7, minutes: 0 }),
-        end: toDecimalHours({ hours: 7, minutes: 30 }),
-        color: "green"
+      id: 4,
+      visible: true,
+      name: "breakfast",
+      start: toDecimalHours({ hours: 7, minutes: 0 }),
+      end: toDecimalHours({ hours: 7, minutes: 30 }),
+      color: "green"
     },
     {
-        visible: true,
-        name: "supper",
-        start: toDecimalHours({ hours: 18, minutes: 30 }),
-        end: toDecimalHours({ hours: 19, minutes: 0 }),
-        color: "green"
+      id: 5,
+      visible: true,
+      name: "supper",
+      start: toDecimalHours({ hours: 18, minutes: 30 }),
+      end: toDecimalHours({ hours: 19, minutes: 0 }),
+      color: "green"
     },
   ])
 

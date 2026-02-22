@@ -6,13 +6,15 @@ import { useEffect, useState } from "react";
 import AddSector from "./AddSector";
 
 const SettingsScreen = () => {
-    const { secondHand, setSecondHand, 
-            minuteHand, setMinuteHand, 
-            hourHand, setHourHand, 
-            numbers, setNumbers, 
-            easyClock, setEasyClock, 
-            setLocked, timeToLockdown,
-            autoLock, setAutoLock } = useSettings();
+    const {
+        secondHand, setSecondHand, 
+        minuteHand, setMinuteHand, 
+        hourHand, setHourHand, 
+        numbers, setNumbers, 
+        easyClock, setEasyClock, 
+        setLocked, timeToLockdown,
+        autoLock, setAutoLock
+    } = useSettings();
             
     const [delay, setDelay] = useState(timeToLockdown);
     const [showSectors, setShowSectors] = useState(false);
@@ -83,7 +85,7 @@ const SettingsScreen = () => {
                     </SafeAreaView>
                 </TouchableWithoutFeedback>
             ) : (
-                <AddSector />
+                <AddSector setShowSectors={setShowSectors} />
             )}
         </>
     )

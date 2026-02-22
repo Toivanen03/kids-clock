@@ -44,7 +44,7 @@ const EasyClock = ({ time, events }: EasyClockProps) => {
                 {clockHeader(`${time.hours < 12 ? "Aamu" : "Ilta"} ${time.hours}:${time.minutes.toString().padStart(2,"0")}`)}
             </View>
 
-            <Svg height="80%" width="95%" viewBox="0 0 200 200">
+            <Svg height="90%" width="95%" viewBox="0 0 200 200">
                 <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="#eee" />
 
                 <Defs>
@@ -58,10 +58,6 @@ const EasyClock = ({ time, events }: EasyClockProps) => {
                         />
                     </ClipPath>
                 </Defs>
-
-                {settings.secondHand && (
-                        <ClockHands time={time} active={settings.secondHand} />
-                )}
 
                 <Path
                     d={`
@@ -82,6 +78,10 @@ const EasyClock = ({ time, events }: EasyClockProps) => {
                     </G>
                 </G>
 
+                {settings.secondHand && (
+                        <ClockHands time={time} active={settings.secondHand} />
+                )}
+
                 <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="none" stroke="#333" strokeWidth={3} />
 
                 <Polygon
@@ -95,7 +95,7 @@ const EasyClock = ({ time, events }: EasyClockProps) => {
 
                 <Text
                     x={clockLayout.cx}
-                    y={clockLayout.cy - clockLayout.cy - offsetY - 10}
+                    y={clockLayout.cy - clockLayout.cy - offsetY - 15}
                     fill="black"
                     fontSize={12}
                     fontWeight="bold"

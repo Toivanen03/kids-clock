@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { useSettings } from "../hooks/useSettings";
 import EasyClock from "./EasyClock";
+import useSplitSectors from "../hooks/useSplitSectors";
 
 
 const AnalogClock = ({ time, now, isAM, currentWeekday }: AnalogClockProps) => {
@@ -20,20 +21,7 @@ const AnalogClock = ({ time, now, isAM, currentWeekday }: AnalogClockProps) => {
     const { sectors, settings } = useSettings();
     const dailySectors: Sector[] = sectors;
 
-    const sectorsToRender = dailySectors.flatMap(s =>
-        splitSectorForClock(s, now, isAM, preview)
-    );
-
-    const [amEvents, pmEvents]: [Sector[], Sector[]] = sectorsToRender.reduce<[Sector[], Sector[]]>(
-        (a, s) => {
-            if (s.start < 12) {
-                a[0].push(s);
-            } else a[1].push(s);
-
-            return a;
-        },
-        [[], []]
-    );
+    const [amEvents, pmEvents] = useSplitSectors();
 
     const tomorrowEvents: Sector[] = dailySectors.map(s => {
         if (s.start > s.end) {

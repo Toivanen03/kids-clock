@@ -74,7 +74,7 @@ const EasyClock = ({ time, events }: EasyClockProps) => {
                         {events.map((s, i) => (
                             <Path key={i} d={getSectorPath(s.start, s.end)} fill={s.color} />
                         ))}
-                        <AnalogClockNumbers rotation={rotation} />
+                        {settings.analogNumbers && <AnalogClockNumbers rotation={rotation} />}
                     </G>
                 </G>
 

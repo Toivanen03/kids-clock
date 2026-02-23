@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import type { Dispatch, SetStateAction } from "react";
 
 export const weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 export type Weekday = typeof weekdays[number];
@@ -11,6 +12,22 @@ export const WEEKDAY_LABELS: Record<Weekday, string> = {
     fri: "Perjantai",
     sat: "Lauantai",
     sun: "Sunnuntai",
+};
+
+export const predefinedColors = [ '#E41A1C', '#377EB8', '#4DAF4A', '#FF7F00', '#984EA3', '#00CED1', '#D2B48C', '#000000', '#A9A9A9', '#FFFFFF' ] as const;
+export type Color = typeof predefinedColors[number];
+
+export const COLOR_LABELS: Record<Color, string> = {
+    '#E41A1C': 'Punainen',
+    '#377EB8': 'Sininen',
+    '#4DAF4A': 'Vihreä',
+    '#FF7F00': 'Keltainen',
+    '#984EA3': 'Violetti',
+    '#00CED1': 'Turkoosi',
+    '#D2B48C': 'Okra',
+    '#000000': 'Musta',
+    '#A9A9A9': 'Harmaa',
+    '#FFFFFF': 'Valkoinen',
 };
 
 export interface Props {
@@ -34,25 +51,25 @@ export type Settings = {
 
 export interface SettingsContextType {
     secondHand: boolean;
-    setSecondHand: (val: boolean) => void;
+    setSecondHand: Dispatch<SetStateAction<boolean>>;
     minuteHand: boolean;
-    setMinuteHand: (val: boolean) => void;
+    setMinuteHand: Dispatch<SetStateAction<boolean>>;
     hourHand: boolean;
-    setHourHand: (val: boolean) => void;
+    setHourHand: Dispatch<SetStateAction<boolean>>;
     numbers: boolean;
-    setNumbers: (val: boolean) => void;
+    setNumbers: Dispatch<SetStateAction<boolean>>;
     sectors: Sector[];
-    setSectors: (val: Sector[]) => void;
+    setSectors: Dispatch<SetStateAction<Sector[]>>;
     easyClock: boolean;
-    setEasyClock: (val: boolean) => void;
+    setEasyClock: Dispatch<SetStateAction<boolean>>;
     pin: number;
-    setPin: (val: number) => void;
+    setPin: Dispatch<SetStateAction<number>>;
     locked: boolean;
-    setLocked: (val: boolean) => void;
+    setLocked: Dispatch<SetStateAction<boolean>>;
     settings: Settings;
     timeToLockdown: number;
     autoLock: boolean;
-    setAutoLock: (val: boolean) => void;
+    setAutoLock: Dispatch<SetStateAction<boolean>>;
 }
 
 export type Sector = {

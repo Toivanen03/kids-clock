@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "../styles";
 import { useSettings } from "../hooks/useSettings";
 import { useEffect, useState } from "react";
-import AddSector from "./AddSector";
+import SectorsScreen from "./SectorsScreen";
 
 const SettingsScreen = () => {
     const {
@@ -72,7 +72,7 @@ const SettingsScreen = () => {
                         <View style={{ flexDirection: 'row', padding: 10, justifyContent: 'space-between', alignItems: 'center' }}>
                             <View style={{...styles.lockButton, backgroundColor: 'lightblue'}}>
                                 <Pressable onPressIn={() => setShowSectors(true)}>
-                                    <Text>Lisää merkintä</Text>
+                                    <Text>Sektorit</Text>
                                 </Pressable>
                             </View>
 
@@ -85,7 +85,7 @@ const SettingsScreen = () => {
                     </SafeAreaView>
                 </TouchableWithoutFeedback>
             ) : (
-                <AddSector setShowSectors={setShowSectors} />
+                <SectorsScreen setShowSectors={setShowSectors} />
             )}
         </>
     )

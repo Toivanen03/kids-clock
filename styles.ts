@@ -53,9 +53,15 @@ export const styles = StyleSheet.create({
     borderColor: 'black',
     borderWidth: 1,
     borderRadius: '50%',
-    alignItems: 'center',
-    justifyContent: 'center',
     padding: 10
+  },
+
+  trashButtonContainer: {
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 16
   },
 
   navigatorBg: {
@@ -83,6 +89,24 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between'
+  },
+
+  sectorsRow: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+
+  sectorsColumn: {
+    flexDirection: 'column',
+    width: '43%',
+    fontWeight: 'bold',
+    color: '#dcfbff',
+    fontSize: 16,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 
   header: {

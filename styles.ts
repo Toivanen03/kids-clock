@@ -12,8 +12,9 @@ export const styles = StyleSheet.create({
   topContainer: {
     flex: 1,
     width: '100%',
+    height: '90%',
     alignItems: 'center',
-    padding: 10
+    padding: 8
   },
 
   addSectorTopBanner: {
@@ -23,6 +24,30 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: 50,
     paddingHorizontal: 16,
+  },
+
+  weekdayButtons: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  weekDayButtonText: {
+    fontSize: 20,
+    color: '#999'
+  },
+
+  activeWeekDayButtonText: {
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 1
+
+  },
+
+  todayButtonText: {
+    textDecorationLine: 'underline',
+    fontWeight: 'bold',
+    color: 'black'
   },
 
   bottomContainer: {
@@ -35,6 +60,7 @@ export const styles = StyleSheet.create({
   addSectorClockContainer: {
     flex: 1,
     width: '100%',
+    height: '90%',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -44,7 +70,7 @@ export const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0,
+    bottom: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -95,18 +121,45 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'center'
+    paddingVertical: 8
   },
 
-  sectorsColumn: {
-    flexDirection: 'column',
-    width: '43%',
-    fontWeight: 'bold',
-    color: '#dcfbff',
-    fontSize: 16,
-    padding: 10,
+  colorColumn: {
+    marginStart: 8,
+    width: 24,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'flex-start',
+    marginRight: 8
+  },
+
+  nameColumn: {
+    flex: 2,
+    justifyContent: 'center',
+    alignItems: 'flex-start'
+  },
+
+  timeColumn: {
+    flex: 1.2,
+    justifyContent: 'center',
+    alignItems: 'flex-start'
+  },
+
+  trashColumn: {
+    width: 40,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    marginEnd: 8,
+  },
+
+  sectorPreviewText: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    textAlign: 'left'
+  },
+
+  colorBox: {
+    width: 16,
+    height: 16
   },
 
   header: {
@@ -158,9 +211,11 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
   },
+
   text: {
     fontSize: 24,
   },
+
   hiddenInput: {
     position: "absolute",
     opacity: 0,

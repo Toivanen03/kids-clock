@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from 'react';
 import { SettingsContextType, Props } from '../types/types';
 import { toDecimalHours } from '../utils/timeConversion';
-import type { Sector, Settings } from '../types/types';
+import { Sector, Settings } from '../types/types';
 
 export const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
@@ -34,13 +34,12 @@ export const SettingsProvider = ({ children }: Props) => {
     hourHand: hourHand,
     minuteHand: minuteHand,
     secondHand: secondHand,
-
   };
 
   const [sectors, setSectors] = useState<Sector[]>([
     {
       id: 1,
-      visible: true,
+      activeDays: ['mon', 'wed'],
       name: "Uni",
       start: toDecimalHours({ hours: 20, minutes: 0}),
       end: toDecimalHours({ hours: 6, minutes: 30 }),
@@ -48,7 +47,7 @@ export const SettingsProvider = ({ children }: Props) => {
     },
     {
       id: 2,
-      visible: true,
+      activeDays: [],
       name: "Koulu",
       start: toDecimalHours({ hours: 8, minutes: 0 }),
       end: toDecimalHours({ hours: 13, minutes: 15 }),
@@ -56,7 +55,7 @@ export const SettingsProvider = ({ children }: Props) => {
     },
     {
       id: 3,
-      visible: true,
+      activeDays: [],
       name: "Harrastus",
       start: toDecimalHours({ hours: 17, minutes: 45 }),
       end: toDecimalHours({ hours: 19, minutes: 0 }),
@@ -64,7 +63,7 @@ export const SettingsProvider = ({ children }: Props) => {
     },
     {
       id: 4,
-      visible: true,
+      activeDays: ['mon', 'tue', 'wed'],
       name: "Aamupala",
       start: toDecimalHours({ hours: 7, minutes: 0 }),
       end: toDecimalHours({ hours: 7, minutes: 30 }),
@@ -72,7 +71,7 @@ export const SettingsProvider = ({ children }: Props) => {
     },
     {
       id: 5,
-      visible: true,
+      activeDays: [],
       name: "Iltapala",
       start: toDecimalHours({ hours: 18, minutes: 30 }),
       end: toDecimalHours({ hours: 19, minutes: 0 }),

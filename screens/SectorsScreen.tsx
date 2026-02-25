@@ -7,32 +7,82 @@ import AnalogClockNumbers from "../components/AnalogClockNumbers";
 import { useSettings } from "../hooks/useSettings";
 import { useState } from "react";
 import { styles } from "../styles";
-import { Sector, AddSectorProps } from "../types/types";
+import { Sector, AddSectorProps, Weekday, weekdaysOrdered } from "../types/types";
 import { decimalToTime } from "../utils/timeConversion";
 import SplitSectors from "../hooks/useSplitSectors";
+import { useClock } from "../hooks/useClock";
 
 const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
-    const { sectors, setSectors } = useSettings();
-    const [amEvents, pmEvents] = SplitSectors();
+    const { setSectors } = useSettings();
+    const { currentWeekday } = useClock({ test: false, speed: 0 });
+    const [selectedDay, setSelectedDay] = useState(currentWeekday);
+    const [selectedSector, setSelectedSector] = useState<Sector | undefined>(undefined);
+    const [amEvents, pmEvents] = SplitSectors(selectedDay);
     const [am, setAm] = useState(true);
     const icon = am ? faSun : faMoon;
     const backIcon = faArrowLeft;
     const trashIcon = faTrash;
     const events = am ? amEvents : pmEvents;
 
+    const buttonText = {
+        sun: 'SU',
+        mon: 'MA',
+        tue: 'TI',
+        wed: 'KE',
+        thu: 'TO',
+        fri: 'PE',
+        sat: 'LA'
+    };
+
+    function setSectorActiveDays(
+        sectorId: number,
+        activeDays: Weekday[]
+    ) {
+        setSectors(prev =>
+            prev.map(sector =>
+            sector.id === sectorId
+                ? { ...sector, activeDays }
+                : sector
+            )
+        );
+    };
+
     function formatSectorRow(property: Sector) {
         return (
-            <View key={property.id} style={{...styles.sectorsRow, backgroundColor: property.color }}>
-                <Text style={styles.sectorsColumn}>{property.name}</Text>
-                <Text style={styles.sectorsColumn}>{decimalToTime(property.start)} - {decimalToTime(property.end)}</Text>
-                <Pressable onPressIn={() => deleteSector(property)}>
-                    <View style={{...styles.sectorsColumn, ...styles.trashButtonContainer}}>
-                        <FontAwesomeIcon icon={trashIcon} size={20} />
-                    </View>
-                </Pressable>
+            <View key={property.id}>
+                <View style={styles.sectorsRow}>
+                    <Pressable
+                        onPressIn={() => setSelectedSector(property)}
+                        style={{ flexDirection: "row", width: "100%", alignItems: "center" }}
+                    >
+                        <View style={styles.colorColumn}>
+                            <View style={[styles.colorBox, { backgroundColor: property.color }]} />
+                        </View>
+
+                        <View style={styles.nameColumn}>
+                            <Text style={styles.sectorPreviewText}>{property.name}</Text>
+                        </View>
+
+                        <View style={styles.timeColumn}>
+                            <Text style={styles.sectorPreviewText}>
+                                {decimalToTime(property.start)} - {decimalToTime(property.end)}
+                            </Text>
+                        </View>
+
+                        <Pressable
+                            onPressIn={() => deleteSector(property)}
+                            style={styles.trashColumn}
+                        >
+                            <FontAwesomeIcon icon={trashIcon} size={20} color="red" />
+                        </Pressable>
+                    </Pressable>
+                </View>
+                <Text>{selectedSector && selectedSector.id === property.id && "VALITTU SEKTORI"}</Text>
             </View>
-        )
-    };
+        );
+    }
+
+    
 
     function deleteSector(property: Sector) {
         const id = property.id;
@@ -42,19 +92,35 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
             "Poista sektori",
             `Haluatko varmasti poistaa ${name}-sektorin?`,
             [
-            {
-                text: "Peruuta",
-                style: "cancel"
-            },
-            {
-                text: "Poista",
-                style: "destructive",
-                onPress: () => {
-                setSectors(prev => prev.filter(s => s.id !== id));
+                {
+                    text: "Peruuta",
+                    style: "cancel"
+                },
+                {
+                    text: "Poista",
+                    style: "destructive",
+                    onPress: () => {
+                    setSectors(prev => prev.filter(s => s.id !== id));
+                    }
                 }
-            }
             ]
         );
+    };
+
+    function getWeekdayButtons() {
+        return weekdaysOrdered.map(d => {
+            const isActive = selectedDay.includes(d);
+            const isToday = currentWeekday === d;
+            return (
+                <View key={d} style={styles.weekdayButtons}>
+                    <Pressable onPressIn={() => setSelectedDay(d)}>
+                        <Text style={[ styles.weekDayButtonText, isActive && styles.activeWeekDayButtonText, isToday && styles.todayButtonText ]}>
+                            {buttonText[d]}
+                        </Text>
+                    </Pressable>
+                </View>
+            )}
+        )
     }
 
     return (
@@ -75,7 +141,7 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                 <View style={styles.addSectorClockContainer}>
                     <View style={{ aspectRatio: 1 }}>
                         
-                        <Svg width="100%" height="100%" viewBox="0 0 200 200">
+                        <Svg width="100%" height="90%" viewBox="0 0 200 200">
                             <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="#eee" />
                                 {events.map((s, i) => (
                                     <Path key={i} d={getSectorPath(s.start, s.end)} fill={s.color} />
@@ -92,13 +158,15 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                                 </View>
                             </Pressable>
                         </View>
+
+                        <View style={{ flexDirection: 'row' }}>{getWeekdayButtons()}</View>
                     </View>
                 </View>
             </View>
 
             <View style={styles.bottomContainer}>
                 <View>
-                    {sectors.map(s => formatSectorRow(s))}
+                    {events.map(s => formatSectorRow(s))}
                 </View>
             </View>
         </View>

@@ -10,7 +10,7 @@ import { decimalToTime } from "../utils/timeConversion";
 import ClockHands from "./ClockHands";
 
 const EasyClock = ({ time, events }: EasyClockProps) => {
-    const { sectors, settings } = useSettings()
+    const { settings } = useSettings()
     const rotation = -(time.hours % 12 + time.minutes / 60 + time.seconds / 3600) * 30;
     const offsetY = 25;
 
@@ -28,12 +28,12 @@ const EasyClock = ({ time, events }: EasyClockProps) => {
 
     const now = time.hours + time.minutes / 60 + time.seconds / 3600;
 
-    const onGoing = sectors
+    const onGoing = events
         .slice()
         .sort((a, b) => a.start - b.start)
         .find(e => e.start < now && e.end > now);
 
-    const next = sectors
+    const next = events
         .slice()
         .sort((a, b) => a.start - b.start)
         .find(e => e.start > now);
@@ -103,35 +103,35 @@ const EasyClock = ({ time, events }: EasyClockProps) => {
                 >
                     Aika
                 </Text>
+                
+                {onGoing &&
+                    <>
+                        <Text
+                            x={clockLayout.cx}
+                            y={clockLayout.cy + 15}
+                            fill="black"
+                            fontSize={12}
+                            fontWeight="bold"
+                            textAnchor="middle"
+                        >
+                            Nyt:
+                        </Text>
+
+                            <Text
+                            x={clockLayout.cx}
+                            y={clockLayout.cy + 30}
+                            fill="blue"
+                            fontSize={14}
+                            fontWeight="bold"
+                            textAnchor="middle"
+                        >
+                            {`${onGoing.name} kello ${decimalToTime(onGoing.end)} asti`}
+                        </Text>
+                    </>
+                }
 
                 {next &&
                     <>
-                        {onGoing &&
-                            <>
-                                <Text
-                                    x={clockLayout.cx}
-                                    y={clockLayout.cy + 15}
-                                    fill="black"
-                                    fontSize={12}
-                                    fontWeight="bold"
-                                    textAnchor="middle"
-                                >
-                                    Nyt:
-                                </Text>
-
-                                    <Text
-                                    x={clockLayout.cx}
-                                    y={clockLayout.cy + 30}
-                                    fill="blue"
-                                    fontSize={14}
-                                    fontWeight="bold"
-                                    textAnchor="middle"
-                                >
-                                    {`${onGoing.name} kello ${decimalToTime(onGoing.end)} asti`}
-                                </Text>
-                            </>
-                        }
-
                         <Text
                             x={clockLayout.cx}
                             y={clockLayout.cy + 50}

@@ -1,10 +1,11 @@
-import { Sector } from "../types/types";
+import { Sector, Weekday } from "../types/types";
 import { useSettings } from "./useSettings";
 
-const useSplitSectors = (): [Sector[], Sector[]] => {
+const useSplitSectors = ( selectedDay: Weekday ): [Sector[], Sector[]] => {
   const { sectors } = useSettings();
+  const sectorsToShow = sectors.filter(s => s.activeDays.includes(selectedDay))
 
-  const [amEvents, pmEvents]: [Sector[], Sector[]] = sectors.reduce<[Sector[], Sector[]]>(
+  const [amEvents, pmEvents]: [Sector[], Sector[]] = sectorsToShow.reduce<[Sector[], Sector[]]>(
     (a, s) => {
       if (s.start < 12) {
         if (s.end > 12) {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { View, Pressable } from "react-native";
 import { styles } from "../styles";
 import Svg, { Circle, Path } from 'react-native-svg';
-import { clockLayout, getSectorPath, splitSectorForClock } from "../utils/constants";
+import { clockLayout, getSectorPath } from "../utils/constants";
 import AnalogClockNumbers from "./AnalogClockNumbers";
 import ClockHands from "./ClockHands";
 import { AnalogClockProps } from "../types/types"
@@ -21,7 +21,7 @@ const AnalogClock = ({ time, now, isAM, currentWeekday }: AnalogClockProps) => {
     const { sectors, settings } = useSettings();
     const dailySectors: Sector[] = sectors;
 
-    const [amEvents, pmEvents] = useSplitSectors();
+    const [amEvents, pmEvents] = useSplitSectors(currentWeekday);
 
     const tomorrowEvents: Sector[] = dailySectors.map(s => {
         if (s.start > s.end) {

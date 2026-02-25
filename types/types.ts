@@ -3,6 +3,7 @@ import type { Dispatch, SetStateAction } from "react";
 
 export const weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 export type Weekday = typeof weekdays[number];
+export const weekdaysOrdered: Weekday[] = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
 export const WEEKDAY_LABELS: Record<Weekday, string> = {
     mon: "Maanantai",
@@ -74,7 +75,7 @@ export interface SettingsContextType {
 
 export type Sector = {
     id: number;
-    visible: boolean;
+    activeDays: Weekday[];
     name: string;
     start: number;
     end: number;

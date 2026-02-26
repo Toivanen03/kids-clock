@@ -6,37 +6,16 @@ import AnalogClockNumbers from "./AnalogClockNumbers";
 import { clockHeader } from "./ClockHeader";
 import { styles } from "../styles";
 import { useSettings } from "../hooks/useSettings";
-import { decimalToTime } from "../utils/timeConversion";
 import ClockHands from "./ClockHands";
+import EventDisplay from "./EventDisplay";
+import { sectorPath } from "../utils/constants";
 
 const EasyClock = ({ time, events }: EasyClockProps) => {
-    const { sectors, settings } = useSettings()
+    const { settings } = useSettings()
     const rotation = -(time.hours % 12 + time.minutes / 60 + time.seconds / 3600) * 30;
     const offsetY = 25;
 
-    const angle = Math.PI / 4;
-
-    const x1 = clockLayout.cx - Math.sin(angle) * clockLayout.r;
-    const y1 = clockLayout.cy - Math.cos(angle) * clockLayout.r;
-    const x2 = clockLayout.cx + Math.sin(angle) * clockLayout.r;
-    const y2 = clockLayout.cy - Math.cos(angle) * clockLayout.r;
-
-    const yTop = clockLayout.cy - clockLayout.r;
-    const xOffset = Math.tan(angle) * clockLayout.r;
-    const leftX  = clockLayout.cx - xOffset;
-    const rightX = clockLayout.cx + xOffset;
-
-    const now = time.hours + time.minutes / 60 + time.seconds / 3600;
-
-    const onGoing = sectors
-        .slice()
-        .sort((a, b) => a.start - b.start)
-        .find(e => e.start < now && e.end > now);
-
-    const next = sectors
-        .slice()
-        .sort((a, b) => a.start - b.start)
-        .find(e => e.start > now);
+    const { leftX, yTop, rightX, x1, y1, x2, y2} = sectorPath();
 
     return (
         <View style={styles.container}>
@@ -44,7 +23,7 @@ const EasyClock = ({ time, events }: EasyClockProps) => {
                 {clockHeader(`${time.hours < 12 ? "Aamu" : "Ilta"} ${time.hours}:${time.minutes.toString().padStart(2,"0")}`)}
             </View>
 
-            <Svg height="80%" width="95%" viewBox="0 0 200 200">
+            <Svg height="90%" width="95%" viewBox="0 0 200 200">
                 <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="#eee" />
 
                 <Defs>
@@ -59,10 +38,6 @@ const EasyClock = ({ time, events }: EasyClockProps) => {
                     </ClipPath>
                 </Defs>
 
-                {settings.secondHand && (
-                        <ClockHands time={time} active={settings.secondHand} />
-                )}
-
                 <Path
                     d={`
                         M ${clockLayout.cx},${clockLayout.cy} L ${x1},${y1}
@@ -75,12 +50,26 @@ const EasyClock = ({ time, events }: EasyClockProps) => {
 
                 <G clipPath="url(#windowClip)">
                     <G transform={`rotate(${rotation} ${clockLayout.cx} ${clockLayout.cy})`}>
-                        {events.map((s, i) => (
-                            <Path key={i} d={getSectorPath(s.start, s.end)} fill={s.color} />
-                        ))}
-                        <AnalogClockNumbers rotation={rotation} />
+
+                        {events.map((s, i) => 
+                            s.activeDays.map((d, j) => 
+                                d ? (
+                                <Path
+                                    key={`${i}-${j}`}
+                                    d={getSectorPath(d.start, d.end)}
+                                    fill={s.color}
+                                />
+                                ) : null
+                            )
+                        )}
+
+                        {settings.analogNumbers && <AnalogClockNumbers rotation={rotation} />}
                     </G>
                 </G>
+
+                {settings.secondHand && (
+                        <ClockHands time={time} active={settings.secondHand} />
+                )}
 
                 <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="none" stroke="#333" strokeWidth={3} />
 
@@ -95,7 +84,7 @@ const EasyClock = ({ time, events }: EasyClockProps) => {
 
                 <Text
                     x={clockLayout.cx}
-                    y={clockLayout.cy - clockLayout.cy - offsetY - 10}
+                    y={clockLayout.cy - clockLayout.cy - offsetY - 15}
                     fill="black"
                     fontSize={12}
                     fontWeight="bold"
@@ -103,58 +92,9 @@ const EasyClock = ({ time, events }: EasyClockProps) => {
                 >
                     Aika
                 </Text>
-
-                {next &&
-                    <>
-                        {onGoing &&
-                            <>
-                                <Text
-                                    x={clockLayout.cx}
-                                    y={clockLayout.cy + 15}
-                                    fill="black"
-                                    fontSize={12}
-                                    fontWeight="bold"
-                                    textAnchor="middle"
-                                >
-                                    Nyt:
-                                </Text>
-
-                                    <Text
-                                    x={clockLayout.cx}
-                                    y={clockLayout.cy + 30}
-                                    fill="blue"
-                                    fontSize={14}
-                                    fontWeight="bold"
-                                    textAnchor="middle"
-                                >
-                                    {`${onGoing.name} kello ${decimalToTime(onGoing.end)} asti`}
-                                </Text>
-                            </>
-                        }
-
-                        <Text
-                            x={clockLayout.cx}
-                            y={clockLayout.cy + 50}
-                            fill="black"
-                            fontSize={12}
-                            fontWeight="bold"
-                            textAnchor="middle"
-                        >
-                            Seuraavaksi:
-                        </Text>
-
-                            <Text
-                            x={clockLayout.cx}
-                            y={clockLayout.cy + 65}
-                            fill="blue"
-                            fontSize={14}
-                            fontWeight="bold"
-                            textAnchor="middle"
-                        >
-                            {`${next.name} kello ${decimalToTime(next.start)}`}
-                        </Text>
-                    </>
-                }
+                
+                <EventDisplay time={time} events={events} easyClock={true} />
+                
             </Svg>
         </View>
     );

@@ -1,10 +1,33 @@
-import { Sector } from "../types/types";
-
 export const clockLayout = {
     cx: 100,
     cy: 100,
     r: 98,
 };
+
+export const sectorPath = () => {
+    const angle = Math.PI / 4;
+
+    const x1 = clockLayout.cx - Math.sin(angle) * clockLayout.r;
+    const y1 = clockLayout.cy - Math.cos(angle) * clockLayout.r;
+    const x2 = clockLayout.cx + Math.sin(angle) * clockLayout.r;
+    const y2 = clockLayout.cy - Math.cos(angle) * clockLayout.r;
+
+    const yTop = clockLayout.cy - clockLayout.r;
+    const xOffset = Math.tan(angle) * clockLayout.r;
+    const leftX  = clockLayout.cx - xOffset;
+    const rightX = clockLayout.cx + xOffset;
+
+    return {
+        angle,
+        x1,
+        y1,
+        x2,
+        y2,
+        yTop,
+        leftX,
+        rightX
+    };
+}
 
 export const getSectorPath = (startHour: number, endHour: number) => {
     const { cx, cy, r } = clockLayout;
@@ -22,37 +45,4 @@ export const getSectorPath = (startHour: number, endHour: number) => {
     const sweepFlag = 1;
 
     return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArcFlag} ${sweepFlag} ${x2} ${y2} Z`;
-};
-
-export const splitSectorForClock = ( sector: Sector, now: Date, isAM: boolean, preview: boolean ) => {
-    const currentHour = now.getHours() + now.getMinutes() / 60;
-    const pastMidnight = sector.end <= sector.start;
-    const onGoing = sector.start < currentHour;
-    const upComing = currentHour < sector.start;
-    const finished = sector.end < currentHour;
-    const middayEvent = sector.start <= 12 && sector.end > 12;
-
-    if (!sector.visible) return [];
-
-    if (pastMidnight) {
-        const sleepStart = !onGoing && !finished ? currentHour : 0;
-        const part1 = { ...sector, start: onGoing ? currentHour : sector.start, end: 24 };
-        const part2 = { ...sector, start: sleepStart, end: sector.end };
-
-        if (preview) return [part1];
-        return !finished && isAM ? [part2] : [part1];
-    }
-
-    if (finished) return [];
-
-    if (upComing) {
-        if (middayEvent) {
-            const adjustedEnd = Math.min(currentHour + 12, sector.end);
-            return [{ ...sector, start: sector.start, end: adjustedEnd }];
-        }
-
-        return [sector];
-    }
-
-    return [{ ...sector, start: currentHour, end: sector.end }];
 };

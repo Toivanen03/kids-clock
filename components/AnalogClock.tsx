@@ -2,7 +2,7 @@ import { useState } from "react";
 import { View, Pressable } from "react-native";
 import { styles } from "../styles";
 import Svg, { Circle, Path } from 'react-native-svg';
-import { clockLayout, getSectorPath, splitSectorForClock } from "../utils/constants";
+import { clockLayout, getSectorPath } from "../utils/constants";
 import AnalogClockNumbers from "./AnalogClockNumbers";
 import ClockHands from "./ClockHands";
 import { AnalogClockProps } from "../types/types"
@@ -12,41 +12,36 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { useSettings } from "../hooks/useSettings";
 import EasyClock from "./EasyClock";
+import useSplitSectors from "../hooks/useSplitSectors";
+import EventDisplay from "./EventDisplay";
 
-
-const AnalogClock = ({ time, now, isAM }: AnalogClockProps) => {
+const AnalogClock = ({ time, now, isAM, currentWeekday }: AnalogClockProps) => {
     const [preview, setPreview] = useState(false);
     const [secondaryView, setSecondaryView] = useState(false);
     const { sectors, settings } = useSettings();
     const dailySectors: Sector[] = sectors;
 
-    const sectorsToRender = dailySectors.flatMap(s =>
-        splitSectorForClock(s, now, isAM, preview)
-    );
-
-    const [amEvents, pmEvents]: [Sector[], Sector[]] = sectorsToRender.reduce<[Sector[], Sector[]]>(
-        (a, s) => {
-            if (s.start < 12) {
-                a[0].push(s);
-            } else a[1].push(s);
-
-            return a;
-        },
-        [[], []]
-    );
+    const [amEvents, pmEvents] = useSplitSectors(currentWeekday);
 
     const tomorrowEvents: Sector[] = dailySectors.map(s => {
-        if (s.start > s.end) {
-            return { ...s, start: 0 };
-        }
+        const newActiveDays = s.activeDays
+            .map(d => {
+            let newStart = d.start;
+            let newEnd = d.end;
 
-        if ((s.start >= 0 && s.start < 12) && s.end >= 12) {
-            return { ...s, end: 12 };
-        } else if ((s.start >= 0 && s.start < 12) && s.end < 12) {
-            return s;
-        }
-        return null;
-    }).filter((s): s is Sector => s !== null);
+            if (d.start > d.end) {
+                newStart = 0;
+            }
+
+            if (d.start < 12 && d.end >= 12) {
+                newEnd = 12;
+            }
+
+            return { ...d, start: newStart, end: newEnd };
+            })
+            .filter(d => d.start !== d.end);
+        return { ...s, activeDays: newActiveDays };
+    }).filter(s => s.activeDays.length > 0);
 
     const events: Sector[] = !preview
         ? (isAM ? amEvents : pmEvents)
@@ -70,12 +65,20 @@ const AnalogClock = ({ time, now, isAM }: AnalogClockProps) => {
                             ))}
                     </View>
 
-                    <Svg height="80%" width="95%" viewBox="0 0 200 200">
+                    <Svg height="60%" width="95%" viewBox="0 0 200 200">
                         <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="#eee" />
 
-                        {events.map((s, i) => (
-                            <Path key={i} d={getSectorPath(s.start, s.end)} fill={s.color} />
-                        ))}
+                        {events.map((s, i) => 
+                            s.activeDays.map((d, j) => 
+                                d ? (
+                                <Path
+                                    key={`${i}-${j}`}
+                                    d={getSectorPath(d.start, d.end)}
+                                    fill={s.color}
+                                />
+                                ) : null
+                            )
+                        )}
 
                         <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="none" stroke="#333" strokeWidth={3} />
 
@@ -85,6 +88,8 @@ const AnalogClock = ({ time, now, isAM }: AnalogClockProps) => {
                             <ClockHands time={time} active={!secondaryView} />
                         )}
                     </Svg>
+
+                    <EventDisplay time={time} events={events} easyClock={false} />
 
                     <View style={styles.previewButton}>
                         <Pressable
@@ -96,7 +101,7 @@ const AnalogClock = ({ time, now, isAM }: AnalogClockProps) => {
                     </View>
                 </View>
             ) : (
-                <EasyClock time={time} now={now} isAM={isAM} events={events} />
+                <EasyClock time={time} now={now} isAM={isAM} events={events} currentWeekday={currentWeekday} />
             )}
         </>
     );

@@ -9,6 +9,94 @@ export const styles = StyleSheet.create({
     paddingVertical: 15
   },
 
+  topContainer: {
+    flex: 1,
+    width: '100%',
+    height: '90%',
+    alignItems: 'center',
+    padding: 8
+  },
+
+  changePINheader: {
+    alignSelf: 'center',
+    fontWeight: 'bold',
+    fontSize: 24,
+    paddingTop: 10
+  },
+
+  addSectorTopBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    height: 50,
+    paddingHorizontal: 16,
+  },
+
+  weekdayButtons: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  weekDayButtonText: {
+    fontSize: 20,
+    color: '#999'
+  },
+
+  activeWeekDayButtonText: {
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 1
+
+  },
+
+  todayButtonText: {
+    textDecorationLine: 'underline',
+    fontWeight: 'bold',
+    color: 'black'
+  },
+
+  bottomContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff'
+  },
+
+  addSectorClockContainer: {
+    flex: 1,
+    width: '100%',
+    height: '90%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  addSectorAMbuttonContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  backButtonContainer: {
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: '50%',
+    padding: 10
+  },
+
+  trashButtonContainer: {
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 16
+  },
+
   navigatorBg: {
     backgroundColor: '#ccc'
   },
@@ -20,6 +108,23 @@ export const styles = StyleSheet.create({
   navigatorText: {
     fontSize: 20,
     fontWeight: 'bold'
+  },
+
+  eventContainer: {
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+
+  nowText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black'
+  },
+
+  nextText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'blue'
   },
 
   settingsScreen: {
@@ -34,6 +139,51 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between'
+  },
+
+  sectorsRow: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 8
+  },
+
+  colorColumn: {
+    marginStart: 8,
+    width: 24,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    marginRight: 8
+  },
+
+  nameColumn: {
+    flex: 2,
+    justifyContent: 'center',
+    alignItems: 'flex-start'
+  },
+
+  timeColumn: {
+    flex: 1.2,
+    justifyContent: 'center',
+    alignItems: 'flex-start'
+  },
+
+  trashColumn: {
+    width: 40,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    marginEnd: 8,
+  },
+
+  sectorPreviewText: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    textAlign: 'left'
+  },
+
+  colorBox: {
+    width: 16,
+    height: 16
   },
 
   header: {
@@ -58,14 +208,15 @@ export const styles = StyleSheet.create({
   },
 
   lockButton: {
-    padding: '6%',
-    alignSelf: 'center',
+    padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#ff7070',
     borderRadius: 10,
-    width: '50%',
-    height: 'auto'
+    width: '45%',
+    height: 'auto',
+    borderWidth: 1,
+    borderColor: 'black',
   },
 
   pinContainer: {
@@ -84,9 +235,11 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
   },
+
   text: {
     fontSize: 24,
   },
+
   hiddenInput: {
     position: "absolute",
     opacity: 0,

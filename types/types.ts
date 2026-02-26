@@ -1,4 +1,37 @@
 import { ReactNode } from "react";
+import type { Dispatch, SetStateAction } from "react";
+
+export const weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
+export type Weekday = typeof weekdays[number];
+export const weekdaysOrdered: Weekday[] = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+
+export const WEEKDAY_LABELS: Record<Weekday, string> = {
+    mon: "Maanantai",
+    tue: "Tiistai",
+    wed: "Keskiviikko",
+    thu: "Torstai",
+    fri: "Perjantai",
+    sat: "Lauantai",
+    sun: "Sunnuntai",
+};
+
+export type EventWithDay = { sector: Sector; start: number; end: number, name: string };
+
+export const predefinedColors = [ '#E41A1C', '#377EB8', '#4DAF4A', '#FF7F00', '#984EA3', '#00CED1', '#D2B48C', '#000000', '#A9A9A9', '#FFFFFF' ] as const;
+export type Color = typeof predefinedColors[number];
+
+export const COLOR_LABELS: Record<Color, string> = {
+    '#E41A1C': 'Punainen',
+    '#377EB8': 'Sininen',
+    '#4DAF4A': 'Vihreä',
+    '#FF7F00': 'Keltainen',
+    '#984EA3': 'Violetti',
+    '#00CED1': 'Turkoosi',
+    '#D2B48C': 'Okra',
+    '#000000': 'Musta',
+    '#A9A9A9': 'Harmaa',
+    '#FFFFFF': 'Valkoinen',
+};
 
 export interface Props {
     children: ReactNode;
@@ -21,30 +54,41 @@ export type Settings = {
 
 export interface SettingsContextType {
     secondHand: boolean;
-    setSecondHand: (val: boolean) => void;
+    setSecondHand: Dispatch<SetStateAction<boolean>>;
     minuteHand: boolean;
-    setMinuteHand: (val: boolean) => void;
+    setMinuteHand: Dispatch<SetStateAction<boolean>>;
     hourHand: boolean;
-    setHourHand: (val: boolean) => void;
+    setHourHand: Dispatch<SetStateAction<boolean>>;
     numbers: boolean;
-    setNumbers: (val: boolean) => void;
+    setNumbers: Dispatch<SetStateAction<boolean>>;
     sectors: Sector[];
-    setSectors: (val: Sector[]) => void;
+    setSectors: Dispatch<SetStateAction<Sector[]>>;
     easyClock: boolean;
-    setEasyClock: (val: boolean) => void;
+    setEasyClock: Dispatch<SetStateAction<boolean>>;
     pin: number;
-    setPin: (val: number) => void;
+    setPin: Dispatch<SetStateAction<number>>;
     locked: boolean;
-    setLocked: (val: boolean) => void;
+    setLocked: Dispatch<SetStateAction<boolean>>;
     settings: Settings;
     timeToLockdown: number;
-}
+    autoLock: boolean;
+    setAutoLock: Dispatch<SetStateAction<boolean>>;
+    showCurrent: boolean;
+    setShowCurrent: Dispatch<SetStateAction<boolean>>;
+    showNext: boolean;
+    setShowNext: Dispatch<SetStateAction<boolean>>;
+};
 
-export type Sector = {
-    visible: boolean;
-    name: string;
+export type DaySchedule = {
+    day: Weekday;
     start: number;
     end: number;
+};
+
+export type Sector = {
+    id: number;
+    activeDays: DaySchedule[];
+    name: string;
     color: string;
 };
 
@@ -55,15 +99,23 @@ export interface  ClockHandsProps {
 
 export interface AnalogClockProps {
     time: Time;
-    now: Date,
+    now: Date;
     isAM: boolean;
+    currentWeekday: Weekday;
 };
+
+export interface EventDisplayProps {
+    time: Time;
+    events: Sector[];
+    easyClock: boolean;
+}
 
 export interface EasyClockProps {
     time: Time;
     now: Date,
     isAM: boolean;
     events: Sector[];
+    currentWeekday: Weekday;
 };
 
 export interface AnalogNumberProps {
@@ -79,6 +131,10 @@ export type UseClockOptions = {
     speed: number;
 };
 
+export interface AddSectorProps {
+    setShowSectors: (val: boolean) => void;
+}
+
 export type UseClockReturn = {
     now: Date;
     time: {
@@ -87,4 +143,5 @@ export type UseClockReturn = {
         seconds: number;
     };
     isAM: boolean;
+    currentWeekday: Weekday;
 };

@@ -9,7 +9,11 @@ import * as Haptics from 'expo-haptics';
 const ConfirmPin = () => {
     const [code, setCode] = useState("");
     const inputRef = useRef<TextInput>(null);
-    const { pin, locked, setLocked } = useSettings();
+    const newPinRef = useRef<TextInput>(null);
+    const confirmNewPinRef = useRef<TextInput>(null);
+    const { pin, setPin, locked, setLocked } = useSettings();
+    const [newPin, setNewPin] = useState("");
+    const [newPinConfirm, setNewPinConfirm] = useState("");
 
     const shakeAnim = useRef(new Animated.Value(0)).current;
 
@@ -25,39 +29,73 @@ const ConfirmPin = () => {
         ]).start();
     };
 
+    const defaultPin = pin === 1234;
+    const newPinEntered = (newPin.length === 4) && (newPinConfirm.length === 4) && (newPin === newPinConfirm);
+
+    const inputValue = defaultPin
+        ? (newPin.length < 4 ? newPin : newPinConfirm)
+        : code;
+
+    const inputSetter = defaultPin
+        ? (newPin.length < 4 ? setNewPin : setNewPinConfirm)
+        : setCode;
+
+    const inputRefToUse = defaultPin
+        ? (newPin.length < 4 ? newPinRef : confirmNewPinRef)
+        : inputRef;
+
+    const displayText = defaultPin
+        ? (newPin.length < 4 ? "Uusi PIN:" : "Vahvista uusi PIN:")
+        : "Anna PIN:";
+
     useEffect(() => {
-        if (code.length === 4 && Number(code) === pin) {
-            setCode("");
-            setLocked(false);
-        } else if (code.length === 4) {
-            triggerShake();
-            setCode("");
-            setLocked(true);
-        };
-    }, [code, pin]);
+        if (!defaultPin) {
+            if (code.length === 4 && Number(code) === pin) {
+                setCode("");
+                setLocked(false);
+            } else if (code.length === 4) {
+                triggerShake();
+                setCode("");
+                setLocked(true);
+            }
+        } else {
+            if (newPin.length === 4 && newPinConfirm.length === 4) {
+                if (newPin === newPinConfirm) {
+                    setPin(Number(newPin));
+                    setNewPin("");
+                    setNewPinConfirm("");
+                    setLocked(false);
+                } else {
+                    setNewPinConfirm("");
+                    triggerShake();
+                }
+            }
+        }
+    }, [code, pin, newPin, newPinConfirm, defaultPin]);
 
     return (
         <>
             {locked ? (
                 <Animated.View style={{ transform: [{ translateX: shakeAnim }] }}>
+                    <Text style={styles.changePINheader}>{displayText}</Text>
                     <TouchableOpacity
                         activeOpacity={1}
-                        onPress={() => inputRef.current?.focus()}
+                        onPress={() => inputRefToUse.current?.focus()}
                         style={styles.pinContainer}
                     >
 
                         {Array(4).fill(0).map((_, i) => (
-                            <View key={i} style={[ styles.box, i === code.length && { borderWidth: 2, borderColor: "blue" }]}>
+                            <View key={i} style={[ styles.box, i === inputValue.length && { borderWidth: 2, borderColor: "blue" }]}>
                                 <Text style={styles.text}>
-                                    {code[i] ? "•" : ""}
+                                    {inputValue[i] ? "•" : ""}
                                 </Text>
                             </View>
                         ))}
 
                         <TextInput
-                            ref={inputRef}
-                            value={code}
-                            onChangeText={setCode}
+                            ref={inputRefToUse}
+                            value={inputValue}
+                            onChangeText={inputSetter}
                             keyboardType="number-pad"
                             maxLength={4}
                             style={styles.hiddenInput}

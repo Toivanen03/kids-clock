@@ -1,10 +1,33 @@
-import { Sector, weekdays } from "../types/types";
-
 export const clockLayout = {
     cx: 100,
     cy: 100,
     r: 98,
 };
+
+export const sectorPath = () => {
+    const angle = Math.PI / 4;
+
+    const x1 = clockLayout.cx - Math.sin(angle) * clockLayout.r;
+    const y1 = clockLayout.cy - Math.cos(angle) * clockLayout.r;
+    const x2 = clockLayout.cx + Math.sin(angle) * clockLayout.r;
+    const y2 = clockLayout.cy - Math.cos(angle) * clockLayout.r;
+
+    const yTop = clockLayout.cy - clockLayout.r;
+    const xOffset = Math.tan(angle) * clockLayout.r;
+    const leftX  = clockLayout.cx - xOffset;
+    const rightX = clockLayout.cx + xOffset;
+
+    return {
+        angle,
+        x1,
+        y1,
+        x2,
+        y2,
+        yTop,
+        leftX,
+        rightX
+    };
+}
 
 export const getSectorPath = (startHour: number, endHour: number) => {
     const { cx, cy, r } = clockLayout;

@@ -15,6 +15,8 @@ export const WEEKDAY_LABELS: Record<Weekday, string> = {
     sun: "Sunnuntai",
 };
 
+export type EventWithDay = { sector: Sector; start: number; end: number, name: string };
+
 export const predefinedColors = [ '#E41A1C', '#377EB8', '#4DAF4A', '#FF7F00', '#984EA3', '#00CED1', '#D2B48C', '#000000', '#A9A9A9', '#FFFFFF' ] as const;
 export type Color = typeof predefinedColors[number];
 
@@ -71,14 +73,22 @@ export interface SettingsContextType {
     timeToLockdown: number;
     autoLock: boolean;
     setAutoLock: Dispatch<SetStateAction<boolean>>;
-}
+    showCurrent: boolean;
+    setShowCurrent: Dispatch<SetStateAction<boolean>>;
+    showNext: boolean;
+    setShowNext: Dispatch<SetStateAction<boolean>>;
+};
+
+export type DaySchedule = {
+    day: Weekday;
+    start: number;
+    end: number;
+};
 
 export type Sector = {
     id: number;
-    activeDays: Weekday[];
+    activeDays: DaySchedule[];
     name: string;
-    start: number;
-    end: number;
     color: string;
 };
 
@@ -89,10 +99,16 @@ export interface  ClockHandsProps {
 
 export interface AnalogClockProps {
     time: Time;
-    now: Date,
+    now: Date;
     isAM: boolean;
     currentWeekday: Weekday;
 };
+
+export interface EventDisplayProps {
+    time: Time;
+    events: Sector[];
+    easyClock: boolean;
+}
 
 export interface EasyClockProps {
     time: Time;

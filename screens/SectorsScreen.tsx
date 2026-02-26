@@ -7,7 +7,7 @@ import AnalogClockNumbers from "../components/AnalogClockNumbers";
 import { useSettings } from "../hooks/useSettings";
 import { useState } from "react";
 import { styles } from "../styles";
-import { Sector, AddSectorProps, Weekday, weekdaysOrdered } from "../types/types";
+import { Sector, AddSectorProps, weekdaysOrdered } from "../types/types";
 import { decimalToTime } from "../utils/timeConversion";
 import SplitSectors from "../hooks/useSplitSectors";
 import { useClock } from "../hooks/useClock";
@@ -34,22 +34,12 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
         sat: 'LA'
     };
 
-    function setSectorActiveDays(
-        sectorId: number,
-        activeDays: Weekday[]
-    ) {
-        setSectors(prev =>
-            prev.map(sector =>
-            sector.id === sectorId
-                ? { ...sector, activeDays }
-                : sector
-            )
-        );
-    };
+    function formatSectorRow(property: Sector, index: number) {
+        const startTime = property.activeDays.flatMap(d => d.start);
+        const endTime = property.activeDays.flatMap(d => d.end);
 
-    function formatSectorRow(property: Sector) {
         return (
-            <View key={property.id}>
+            <View key={index}>
                 <View style={styles.sectorsRow}>
                     <Pressable
                         onPressIn={() => setSelectedSector(property)}
@@ -65,7 +55,7 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
 
                         <View style={styles.timeColumn}>
                             <Text style={styles.sectorPreviewText}>
-                                {decimalToTime(property.start)} - {decimalToTime(property.end)}
+                                {decimalToTime(startTime[0])} - {decimalToTime(endTime[0])}
                             </Text>
                         </View>
 
@@ -77,7 +67,13 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                         </Pressable>
                     </Pressable>
                 </View>
-                <Text>{selectedSector && selectedSector.id === property.id && "VALITTU SEKTORI"}</Text>
+                
+                {selectedSector && 
+                    <Text>
+                        {selectedSector.id === property.id && 
+                            "VALITTU SEKTORI"
+                        }
+                    </Text>}
             </View>
         );
     }
@@ -143,9 +139,19 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                         
                         <Svg width="100%" height="90%" viewBox="0 0 200 200">
                             <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="#eee" />
-                                {events.map((s, i) => (
-                                    <Path key={i} d={getSectorPath(s.start, s.end)} fill={s.color} />
-                                ))}
+
+                            {events.map((s, i) => 
+                                s.activeDays.map((d, j) => 
+                                    d ? (
+                                    <Path
+                                        key={`${i}-${j}`}
+                                        d={getSectorPath(d.start, d.end)}
+                                        fill={s.color}
+                                    />
+                                    ) : null
+                                )
+                            )}
+
                             <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="none" stroke="#333" strokeWidth={3} />
 
                             <AnalogClockNumbers />
@@ -166,7 +172,7 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
 
             <View style={styles.bottomContainer}>
                 <View>
-                    {events.map(s => formatSectorRow(s))}
+                    {events.map((s, i) => formatSectorRow(s, i))}
                 </View>
             </View>
         </View>

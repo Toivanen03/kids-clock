@@ -11,6 +11,9 @@ export const SettingsProvider = ({ children }: Props) => {
   const [hourHand, setHourHand] = useState(true);
   const [numbers, setNumbers] = useState(true);
 
+  const [showCurrent, setShowCurrent] = useState(true);
+  const [showNext, setShowNext] = useState(true);
+
   const [pin, setPin] = useState(1234);
   const [timeToLockdown] = useState(30);
   const [locked, setLocked] = useState(true);
@@ -36,45 +39,73 @@ export const SettingsProvider = ({ children }: Props) => {
     secondHand: secondHand,
   };
 
+  function generateId(): number {
+    const id = Date.now();
+    const nextId = Date.now() + 1;
+    return id === nextId ? id : nextId;
+  }
+
   const [sectors, setSectors] = useState<Sector[]>([
     {
-      id: 1,
-      activeDays: ['mon', 'wed'],
+      id: generateId(),
       name: "Uni",
-      start: toDecimalHours({ hours: 20, minutes: 0}),
-      end: toDecimalHours({ hours: 6, minutes: 30 }),
+      activeDays: [
+        { day: 'mon', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
+        { day: 'tue', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
+        { day: 'wed', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
+        { day: 'thu', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
+        { day: 'fri', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
+        { day: 'sat', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
+        { day: 'sun', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
+      ],
       color: "#E41A1C"
     },
     {
-      id: 2,
-      activeDays: [],
+      id: generateId(),
       name: "Koulu",
-      start: toDecimalHours({ hours: 8, minutes: 0 }),
-      end: toDecimalHours({ hours: 13, minutes: 15 }),
+      activeDays: [
+        { day: 'mon', start: toDecimalHours({ hours: 8, minutes: 0}), end: toDecimalHours({ hours: 12, minutes: 0 }) },
+        { day: 'tue', start: toDecimalHours({ hours: 9, minutes: 0}), end: toDecimalHours({ hours: 13, minutes: 15 }) },
+        { day: 'wed', start: toDecimalHours({ hours: 8, minutes: 0}), end: toDecimalHours({ hours: 12, minutes: 0 }) },
+        { day: 'thu', start: toDecimalHours({ hours: 9, minutes: 0}), end: toDecimalHours({ hours: 13, minutes: 15 }) },
+        { day: 'fri', start: toDecimalHours({ hours: 8, minutes: 0}), end: toDecimalHours({ hours: 12, minutes: 0 }) },
+      ],
       color: "#FF7F00"
     },
     {
-      id: 3,
-      activeDays: [],
+      id: generateId(),
       name: "Harrastus",
-      start: toDecimalHours({ hours: 17, minutes: 45 }),
-      end: toDecimalHours({ hours: 19, minutes: 0 }),
+      activeDays: [
+        { day: 'tue', start: toDecimalHours({ hours: 17, minutes: 30}), end: toDecimalHours({ hours: 19, minutes: 0 }) },
+      ],
       color: "#377EB8"
     },
     {
-      id: 4,
-      activeDays: ['mon', 'tue', 'wed'],
+      id: generateId(),
       name: "Aamupala",
-      start: toDecimalHours({ hours: 7, minutes: 0 }),
-      end: toDecimalHours({ hours: 7, minutes: 30 }),
+      activeDays: [
+        { day: 'mon', start: toDecimalHours({ hours: 7, minutes: 15}), end: toDecimalHours({ hours: 7, minutes: 30 }) },
+        { day: 'tue', start: toDecimalHours({ hours: 7, minutes: 15}), end: toDecimalHours({ hours: 7, minutes: 30 }) },
+        { day: 'wed', start: toDecimalHours({ hours: 7, minutes: 15}), end: toDecimalHours({ hours: 7, minutes: 30 }) },
+        { day: 'thu', start: toDecimalHours({ hours: 7, minutes: 15}), end: toDecimalHours({ hours: 7, minutes: 30 }) },
+        { day: 'fri', start: toDecimalHours({ hours: 7, minutes: 15}), end: toDecimalHours({ hours: 7, minutes: 30 }) },
+        { day: 'sat', start: toDecimalHours({ hours: 7, minutes: 15}), end: toDecimalHours({ hours: 7, minutes: 30 }) },
+        { day: 'sun', start: toDecimalHours({ hours: 7, minutes: 15}), end: toDecimalHours({ hours: 7, minutes: 30 }) },
+      ],
       color: "#4DAF4A"
     },
     {
-      id: 5,
-      activeDays: [],
+      id: generateId(),
       name: "Iltapala",
-      start: toDecimalHours({ hours: 18, minutes: 30 }),
-      end: toDecimalHours({ hours: 19, minutes: 0 }),
+      activeDays: [
+        { day: 'mon', start: toDecimalHours({ hours: 19, minutes: 15}), end: toDecimalHours({ hours: 19, minutes: 45 }) },
+        { day: 'tue', start: toDecimalHours({ hours: 19, minutes: 15}), end: toDecimalHours({ hours: 19, minutes: 45 }) },
+        { day: 'wed', start: toDecimalHours({ hours: 19, minutes: 15}), end: toDecimalHours({ hours: 19, minutes: 45 }) },
+        { day: 'thu', start: toDecimalHours({ hours: 19, minutes: 15}), end: toDecimalHours({ hours: 19, minutes: 45 }) },
+        { day: 'fri', start: toDecimalHours({ hours: 19, minutes: 15}), end: toDecimalHours({ hours: 19, minutes: 45 }) },
+        { day: 'sat', start: toDecimalHours({ hours: 19, minutes: 15}), end: toDecimalHours({ hours: 19, minutes: 45 }) },
+        { day: 'sun', start: toDecimalHours({ hours: 19, minutes: 15}), end: toDecimalHours({ hours: 19, minutes: 45 }) },
+      ],
       color: "#4DAF4A"
     },
   ])
@@ -90,7 +121,9 @@ export const SettingsProvider = ({ children }: Props) => {
       locked, setLocked,
       settings, timeToLockdown,
       autoLock, setAutoLock,
-      pin, setPin
+      pin, setPin,
+      showCurrent, setShowCurrent,
+      showNext, setShowNext
     }}>
       {children}
     </SettingsContext.Provider>

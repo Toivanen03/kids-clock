@@ -13,7 +13,10 @@ const SettingsScreen = () => {
         numbers, setNumbers, 
         easyClock, setEasyClock, 
         setLocked, timeToLockdown,
-        autoLock, setAutoLock
+        autoLock, setAutoLock,
+        showCurrent, setShowCurrent,
+        showNext, setShowNext,
+        setPin
     } = useSettings();
             
     const [delay, setDelay] = useState(timeToLockdown);
@@ -65,6 +68,16 @@ const SettingsScreen = () => {
                         </View>
 
                         <View style={styles.settingsRow}>
+                            <Text>Näytä kuluvan tapahtuvan teksti</Text>
+                            <Switch value={showCurrent} onValueChange={setShowCurrent} />
+                        </View>
+
+                        <View style={styles.settingsRow}>
+                            <Text>Näytä seuraavan tapahtuman teksti</Text>
+                            <Switch value={showNext} onValueChange={setShowNext} />
+                        </View>
+
+                        <View style={styles.settingsRow}>
                             <Text>Asetusten lukitus (30 sek.)</Text>
                             <Switch value={autoLock} onValueChange={setAutoLock} />
                         </View>
@@ -79,6 +92,14 @@ const SettingsScreen = () => {
                             <View style={styles.lockButton}>
                                 <Pressable onPressIn={() => setLocked(true)}>
                                     <Text>Lukitse</Text>
+                                </Pressable>
+                            </View>
+                        </View>
+
+                        <View style={{ flexDirection: 'row', padding: 10, justifyContent: 'space-between', alignItems: 'center' }}>
+                            <View style={{...styles.lockButton, backgroundColor: 'lightblue'}}>
+                                <Pressable onPressIn={() => { setLocked(true); setPin(1234) }}>
+                                    <Text>Vaihda PIN</Text>
                                 </Pressable>
                             </View>
                         </View>

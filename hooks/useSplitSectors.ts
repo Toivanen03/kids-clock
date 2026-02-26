@@ -1,26 +1,37 @@
 import { Sector, Weekday } from "../types/types";
 import { useSettings } from "./useSettings";
 
-const useSplitSectors = ( selectedDay: Weekday ): [Sector[], Sector[]] => {
+const useSplitSectors = (selectedDay: Weekday): [Sector[], Sector[]] => {
   const { sectors } = useSettings();
-  const sectorsToShow = sectors.filter(s => s.activeDays.includes(selectedDay))
+
+  const sectorsToShow: Sector[] = sectors
+    .map(s => {
+      const daySchedules = s.activeDays.filter(d => d.day === selectedDay);
+      if (daySchedules.length === 0) return null;
+      return { ...s, activeDays: daySchedules };
+    })
+    .filter((s): s is Sector => s !== null);
 
   const [amEvents, pmEvents]: [Sector[], Sector[]] = sectorsToShow.reduce<[Sector[], Sector[]]>(
-    (a, s) => {
-      if (s.start < 12) {
-        if (s.end > 12) {
-          a[0].push({ ...s, end: 12 });
-          a[1].push({ ...s, start: 12 });
+    (acc, s) => {
+      s.activeDays.forEach(d => {
+        if (d.start < 12) {
+          if (d.end > 12) {
+            acc[0].push({ ...s, activeDays: [{ ...d, end: 12 }] });
+            acc[1].push({ ...s, activeDays: [{ ...d, start: 12 }] });
+          } else {
+            acc[0].push({ ...s, activeDays: [d] });
+          }
         } else {
-          a[0].push(s);
+          if (d.start > 12 && d.end < d.start) {
+            acc[0].push({ ...s, activeDays: [{ ...d, start: 0 }] });
+            acc[1].push({ ...s, activeDays: [{ ...d, end: 24 }] });
+          } else {
+            acc[1].push({ ...s, activeDays: [d] });
+          }
         }
-      } else {
-        if (s.start > 12 && s.end < s.start) {
-          a[0].push({ ...s, start: 0 });
-          a[1].push({ ...s, end: 24 });
-        } else a[1].push(s);
-      }
-      return a;
+      });
+      return acc;
     },
     [[], []]
   );

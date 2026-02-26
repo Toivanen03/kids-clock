@@ -17,6 +17,13 @@ export const styles = StyleSheet.create({
     padding: 8
   },
 
+  changePINheader: {
+    alignSelf: 'center',
+    fontWeight: 'bold',
+    fontSize: 24,
+    paddingTop: 10
+  },
+
   addSectorTopBanner: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -101,6 +108,23 @@ export const styles = StyleSheet.create({
   navigatorText: {
     fontSize: 20,
     fontWeight: 'bold'
+  },
+
+  eventContainer: {
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+
+  nowText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black'
+  },
+
+  nextText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'blue'
   },
 
   settingsScreen: {

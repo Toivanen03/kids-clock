@@ -17,8 +17,16 @@ export const styles = StyleSheet.create({
     padding: 8
   },
 
+  sectorEditContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: 15
+  },
+
   changePINheader: {
     alignSelf: 'center',
+    textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 24,
     paddingTop: 10
@@ -37,6 +45,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 15
   },
 
   weekDayButtonText: {
@@ -58,18 +67,19 @@ export const styles = StyleSheet.create({
   },
 
   bottomContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff'
+    flex: 0.75,
+    alignItems: 'flex-start',
   },
 
   addSectorClockContainer: {
     flex: 1,
     width: '100%',
-    height: '90%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    height: '75%',
+  },
+
+  sectorEdit: {
+    fontWeight: 'bold',
+    fontSize: 18,
   },
 
   addSectorAMbuttonContainer: {
@@ -77,7 +87,7 @@ export const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    bottom: 20,
+    bottom: 75,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -145,14 +155,15 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     alignItems: 'center',
-    paddingVertical: 8
+    justifyContent: 'space-between',
+    paddingVertical: 6
   },
 
   colorColumn: {
     marginStart: 8,
-    width: 24,
+    width: 40,
     justifyContent: 'center',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     marginRight: 8
   },
 
@@ -163,9 +174,32 @@ export const styles = StyleSheet.create({
   },
 
   timeColumn: {
-    flex: 1.2,
+    flex: 2.4,
     justifyContent: 'center',
     alignItems: 'flex-start'
+  },
+
+  editColOne: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    gap: 16,
+    marginStart: 15
+  },
+
+  editColTwo: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    gap: 16
+  },
+
+  editTimeColumn: {
+    flex: 2.4,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
   },
 
   trashColumn: {
@@ -179,6 +213,23 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     textAlign: 'left'
+  },
+
+  sectorEditText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginEnd: 15,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 8,
+    padding: 2
+  },
+
+  sectorText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginEnd: 15
   },
 
   colorBox: {
@@ -214,6 +265,20 @@ export const styles = StyleSheet.create({
     backgroundColor: '#ff7070',
     borderRadius: 10,
     width: '45%',
+    height: 'auto',
+    borderWidth: 1,
+    borderColor: 'black',
+  },
+
+  editSectorButton: {
+    padding: 6,
+    alignItems: 'center',
+    marginStart: 53,
+    marginBottom: 10,
+    justifyContent: 'center',
+    backgroundColor: 'lightblue',
+    borderRadius: 8,
+    width: '30%',
     height: 'auto',
     borderWidth: 1,
     borderColor: 'black',

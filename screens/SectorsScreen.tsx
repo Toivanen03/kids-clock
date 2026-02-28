@@ -11,14 +11,17 @@ import { Sector, AddSectorProps, weekdaysOrdered } from "../types/types";
 import { decimalToTime } from "../utils/timeConversion";
 import SplitSectors from "../hooks/useSplitSectors";
 import { useClock } from "../hooks/useClock";
+import EditSector from "./EditSector";
 
 const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
     const { setSectors } = useSettings();
     const { currentWeekday } = useClock({ test: false, speed: 0 });
     const [selectedDay, setSelectedDay] = useState(currentWeekday);
     const [selectedSector, setSelectedSector] = useState<Sector | undefined>(undefined);
-    const [amEvents, pmEvents] = SplitSectors(selectedDay);
+    const [sectorToEdit, setSectorToEdit] = useState<Sector | undefined>(undefined);
+    const [amEvents, pmEvents, fullDayEvents] = SplitSectors(selectedDay);
     const [am, setAm] = useState(true);
+    
     const icon = am ? faSun : faMoon;
     const backIcon = faArrowLeft;
     const trashIcon = faTrash;
@@ -68,12 +71,14 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                     </Pressable>
                 </View>
                 
-                {selectedSector && 
-                    <Text>
-                        {selectedSector.id === property.id && 
-                            "VALITTU SEKTORI"
-                        }
-                    </Text>}
+                {selectedSector && selectedSector.id === property.id &&
+                    <Pressable
+                        onPressIn={() => setSectorToEdit(property)}
+                        style={styles.editSectorButton}
+                    >
+                        <Text>Muokkaa</Text>
+                    </Pressable>
+                }
             </View>
         );
     }
@@ -137,7 +142,7 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                 <View style={styles.addSectorClockContainer}>
                     <View style={{ aspectRatio: 1 }}>
                         
-                        <Svg width="100%" height="90%" viewBox="0 0 200 200">
+                        <Svg width="100%" height="75%" viewBox="0 0 200 200">
                             <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="#eee" />
 
                             {events.map((s, i) => 
@@ -171,9 +176,11 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
             </View>
 
             <View style={styles.bottomContainer}>
-                <View>
-                    {events.map((s, i) => formatSectorRow(s, i))}
-                </View>
+                {sectorToEdit ? (
+                    <EditSector sector={[sectorToEdit]} />
+                ) : (
+                    fullDayEvents.map((s, i) => formatSectorRow(s, i))
+                )}
             </View>
         </View>
     );

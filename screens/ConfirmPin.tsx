@@ -30,7 +30,6 @@ const ConfirmPin = () => {
     };
 
     const defaultPin = pin === 1234;
-    const newPinEntered = (newPin.length === 4) && (newPinConfirm.length === 4) && (newPin === newPinConfirm);
 
     const inputValue = defaultPin
         ? (newPin.length < 4 ? newPin : newPinConfirm)
@@ -59,7 +58,7 @@ const ConfirmPin = () => {
                 setLocked(true);
             }
         } else {
-            if (newPin.length === 4 && newPinConfirm.length === 4) {
+            if (newPin.length === 4 && newPinConfirm.length === 4 && Number(newPin) !== 1234) {
                 if (newPin === newPinConfirm) {
                     setPin(Number(newPin));
                     setNewPin("");
@@ -69,6 +68,10 @@ const ConfirmPin = () => {
                     setNewPinConfirm("");
                     triggerShake();
                 }
+            } else if (Number(newPin) === 1234) {
+                setNewPin("");
+                setNewPinConfirm("");
+                triggerShake();
             }
         }
     }, [code, pin, newPin, newPinConfirm, defaultPin]);
@@ -77,7 +80,7 @@ const ConfirmPin = () => {
         <>
             {locked ? (
                 <Animated.View style={{ transform: [{ translateX: shakeAnim }] }}>
-                    <Text style={styles.changePINheader}>{displayText}</Text>
+                    <Text style={styles.changePINheader}>{Number(newPin) !== 1234 ? displayText : "PIN ei ole kelvollinen.\nValitse uusi."}</Text>
                     <TouchableOpacity
                         activeOpacity={1}
                         onPress={() => inputRefToUse.current?.focus()}

@@ -33,6 +33,10 @@ export const COLOR_LABELS: Record<Color, string> = {
     '#FFFFFF': 'Valkoinen',
 };
 
+export type SectorProps = {
+    sector: Sector[];
+};
+
 export interface Props {
     children: ReactNode;
 }

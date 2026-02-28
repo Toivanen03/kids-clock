@@ -1,7 +1,7 @@
 import { Sector, Weekday } from "../types/types";
 import { useSettings } from "./useSettings";
 
-const useSplitSectors = (selectedDay: Weekday): [Sector[], Sector[]] => {
+const useSplitSectors = (selectedDay: Weekday): [Sector[], Sector[], Sector[]] => {
   const { sectors } = useSettings();
 
   const sectorsToShow: Sector[] = sectors
@@ -36,7 +36,7 @@ const useSplitSectors = (selectedDay: Weekday): [Sector[], Sector[]] => {
     [[], []]
   );
 
-  return [amEvents, pmEvents];
+  return [amEvents, pmEvents, sectorsToShow];
 };
 
 export default useSplitSectors;

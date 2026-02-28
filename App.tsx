@@ -2,7 +2,6 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import ChildScreen from './screens/childScreen';
-import SettingsScreen from './screens/SettingsScreen';
 import { styles } from './styles';
 import { SettingsProvider } from './hooks/SettingsContext';
 import ConfirmPin from './screens/ConfirmPin';

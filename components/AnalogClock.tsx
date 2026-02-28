@@ -89,7 +89,7 @@ const AnalogClock = ({ time, now, isAM, currentWeekday }: AnalogClockProps) => {
                         )}
                     </Svg>
 
-                    <EventDisplay time={time} events={events} easyClock={false} />
+                    {!preview && <EventDisplay time={time} events={events} easyClock={false} />}
 
                     <View style={styles.previewButton}>
                         <Pressable

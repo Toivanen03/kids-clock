@@ -39,16 +39,12 @@ export const SettingsProvider = ({ children }: Props) => {
     secondHand: secondHand,
   };
 
-  function generateId(): number {
-    const id = Date.now();
-    const nextId = Date.now() + 1;
-    return id === nextId ? id : nextId;
-  }
+  const generateId = () => Date.now() + Math.floor(Math.random() * 1000);
 
   const [sectors, setSectors] = useState<Sector[]>([
     {
       id: generateId(),
-      name: "Uni",
+      name: "Uninukkuma-aika",
       activeDays: [
         { day: 'mon', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
         { day: 'tue', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
@@ -108,7 +104,7 @@ export const SettingsProvider = ({ children }: Props) => {
       ],
       color: "#4DAF4A"
     },
-  ])
+  ]);
 
   return (
     <SettingsContext.Provider value={{

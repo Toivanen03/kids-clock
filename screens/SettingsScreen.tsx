@@ -2,7 +2,8 @@ import { Switch, Text, View, Pressable, TouchableWithoutFeedback } from "react-n
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "../styles";
 import { useSettings } from "../hooks/useSettings";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import SectorsScreen from "./SectorsScreen";
 
 const SettingsScreen = () => {
@@ -36,6 +37,12 @@ const SettingsScreen = () => {
             return () => clearInterval(interval);
         };
     }, [delay, autoLock]);
+
+    useFocusEffect(
+        useCallback(() => {
+            return () => setShowSectors(false);
+        }, [])
+    );
 
     return (
         <>

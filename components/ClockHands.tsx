@@ -52,7 +52,7 @@ const ClockHands: FC<ClockHandsProps> = ({ time, active }) => {
                         y1={cy}
                         x2={x2}
                         y2={y2}
-                        stroke="white"
+                        stroke="#ffffff"
                         strokeWidth={4}
                         strokeLinecap="round"
                     />
@@ -76,7 +76,7 @@ const ClockHands: FC<ClockHandsProps> = ({ time, active }) => {
                         y1={cy}
                         x2={x3}
                         y2={y3}
-                        stroke="white"
+                        stroke="#ffffff"
                         strokeWidth={4}
                         strokeLinecap="round"
                     />
@@ -100,7 +100,7 @@ const ClockHands: FC<ClockHandsProps> = ({ time, active }) => {
                         y1={cy}
                         x2={x4}
                         y2={y4}
-                        stroke="white"
+                        stroke="#ffffff"
                         strokeWidth={1}
                         strokeLinecap="round"
                     />

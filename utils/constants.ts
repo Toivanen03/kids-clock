@@ -1,3 +1,17 @@
+import { Settings } from "../types/types";
+
+export const defaultSettings: Settings = {
+    secondHand: true,
+    minuteHand: true,
+    hourHand: true,
+    analogNumbers: true,
+    showCurrent: true,
+    showNext: true,
+    locked: true,
+    autoLock: false,
+    easyClock: true,
+};
+
 export const generateId = () => Date.now() + Math.floor(Math.random() * 1000);
 
 export const clockLayout = {

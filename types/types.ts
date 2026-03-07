@@ -48,42 +48,34 @@ export type Time = {
     seconds: number;
 };
 
-export type Settings = {
+export interface SettingsContextType {
+    settings: Settings;
+    updateSetting: <K extends keyof Settings>(setting: K, value: Settings[K]) => void;
+    timeToLockdown: number;
     pin: number;
-    analogNumbers: boolean;
-    easyClock: boolean;
-    hourHand: boolean;
-    minuteHand: boolean;
-    secondHand: boolean;
+    updatePin: (newPin: number) => void;
 };
 
-export interface SettingsContextType {
-    secondHand: boolean;
-    setSecondHand: Dispatch<SetStateAction<boolean>>;
-    minuteHand: boolean;
-    setMinuteHand: Dispatch<SetStateAction<boolean>>;
-    hourHand: boolean;
-    setHourHand: Dispatch<SetStateAction<boolean>>;
-    numbers: boolean;
-    setNumbers: Dispatch<SetStateAction<boolean>>;
+export type Settings = {
+  secondHand: boolean;
+  minuteHand: boolean;
+  hourHand: boolean;
+  showCurrent: boolean;
+  showNext: boolean;
+  locked: boolean;
+  autoLock: boolean;
+  easyClock: boolean;
+  analogNumbers: boolean;
+};
+
+export type NewSector = Omit<Sector, "id">;
+
+export type SectorsContextType = {
     sectors: Sector[];
-    setSectors: Dispatch<SetStateAction<Sector[]>>;
-    easyClock: boolean;
-    setEasyClock: Dispatch<SetStateAction<boolean>>;
-    pin: number;
-    setPin: Dispatch<SetStateAction<number>>;
-    locked: boolean;
-    setLocked: Dispatch<SetStateAction<boolean>>;
-    settings: Settings;
-    timeToLockdown: number;
-    autoLock: boolean;
-    setAutoLock: Dispatch<SetStateAction<boolean>>;
-    showCurrent: boolean;
-    setShowCurrent: Dispatch<SetStateAction<boolean>>;
-    showNext: boolean;
-    setShowNext: Dispatch<SetStateAction<boolean>>;
-    addSector: (sectorData: Omit<Sector, "id">) => void
-    updateSector: (sector: Sector) => void
+    addSector: (sector: NewSector) => void;
+    updateSector: (sector: Sector) => void;
+    deleteSector: (id: number) => void;
+    setAllSectors: (sectors: Sector[]) => void;
 };
 
 export type DaySchedule = {

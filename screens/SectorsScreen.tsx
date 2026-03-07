@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faSun, faMoon, faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { clockLayout, getSectorPath } from "../utils/constants";
 import AnalogClockNumbers from "../components/AnalogClockNumbers";
-import { useSettings } from "../hooks/useSettings";
 import { useState } from "react";
 import { styles } from "../styles";
 import { Sector, AddSectorProps, weekdaysOrdered } from "../types/types";
@@ -12,9 +11,10 @@ import { decimalToTime } from "../utils/timeConversion";
 import SplitSectors from "../hooks/useSplitSectors";
 import { useClock } from "../hooks/useClock";
 import EditSector from "./EditSector";
+import { useSectors } from "../hooks/useSectors";
 
 const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
-    const { setSectors } = useSettings();
+    const { deleteSector } = useSectors();
     const { currentWeekday } = useClock({ test: false, speed: 0 });
     const [selectedDay, setSelectedDay] = useState(currentWeekday);
     const [sectorToEdit, setSectorToEdit] = useState<Sector | undefined>(undefined);
@@ -62,7 +62,7 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                         </View>
 
                         <Pressable
-                            onPressIn={() => deleteSector(property)}
+                            onPressIn={() => handleSectorDelete(property)}
                             style={styles.trashColumn}
                         >
                             <FontAwesomeIcon icon={trashIcon} size={20} color="red" />
@@ -75,7 +75,7 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
 
     
 
-    function deleteSector(property: Sector) {
+    function handleSectorDelete(property: Sector) {
         const id = property.id;
         const name = property.name;
 
@@ -91,7 +91,7 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                     text: "Poista",
                     style: "destructive",
                     onPress: () => {
-                    setSectors(prev => prev.filter(s => s.id !== id));
+                        deleteSector(id);
                     }
                 }
             ]

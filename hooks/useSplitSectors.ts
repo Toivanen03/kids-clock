@@ -1,8 +1,8 @@
 import { Sector, Weekday } from "../types/types";
-import { useSettings } from "./useSettings";
+import { useSectors } from "./useSectors";
 
 const useSplitSectors = (selectedDay: Weekday): [Sector[], Sector[], Sector[]] => {
-  const { sectors } = useSettings();
+  const { sectors } = useSectors();
 
   const sectorsToShow: Sector[] = sectors
     .map(s => {

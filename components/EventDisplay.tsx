@@ -7,7 +7,9 @@ import { styles } from "../styles";
 import { useSettings } from "../hooks/useSettings";
 
 const EventDisplay = ({ time, events, easyClock }: EventDisplayProps) => {
-    const { showCurrent, showNext } = useSettings();
+    const { settings } = useSettings();
+    const showCurrent = settings.showCurrent;
+    const showNext = settings.showNext;
     const now = time.hours + time.minutes / 60 + time.seconds / 3600;
 
     const flatEvents: EventWithDay[] = events.flatMap(s =>

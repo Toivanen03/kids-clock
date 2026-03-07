@@ -34,7 +34,8 @@ export const COLOR_LABELS: Record<Color, string> = {
 };
 
 export type SectorProps = {
-    sector: Sector[];
+    sector: Sector;
+    setSectorToEdit: Dispatch<React.SetStateAction<Sector | undefined>>
 };
 
 export interface Props {
@@ -81,6 +82,8 @@ export interface SettingsContextType {
     setShowCurrent: Dispatch<SetStateAction<boolean>>;
     showNext: boolean;
     setShowNext: Dispatch<SetStateAction<boolean>>;
+    addSector: (sectorData: Omit<Sector, "id">) => void
+    updateSector: (sector: Sector) => void
 };
 
 export type DaySchedule = {
@@ -96,10 +99,18 @@ export type Sector = {
     color: string;
 };
 
-export interface  ClockHandsProps {
+export interface ClockHandsProps {
     time: Time;
     active: boolean;
 };
+
+export interface ColorSelectorProps {
+    showColorPanel: boolean;
+    setShowColorPanel: Dispatch<SetStateAction<boolean>>;
+    color: string;
+    setColor: Dispatch<SetStateAction<string>>;
+    name: string;
+}
 
 export interface AnalogClockProps {
     time: Time;

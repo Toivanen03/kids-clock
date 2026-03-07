@@ -9,10 +9,48 @@ export const styles = StyleSheet.create({
     paddingVertical: 15
   },
 
-  topContainer: {
+  colorModalStyle: {
+    flex: 1
+  },
+
+  colorModalTop: {
     flex: 1,
+    minWidth: '100%',
+  },
+
+  colorModalBottom: {
+    flex: 0.25,
+    width: '90%',
+    alignItems: 'center',
+    alignSelf: 'center',
+    justifyContent: 'space-between',
+  },
+
+  colorPreview: {
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 16,
+    width: '45%',
+    height: '50%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  colorButtonText: {
+    fontSize: 24,
+    textShadowColor: 'black',
+    textShadowOffset: {
+      width: 1,
+      height: 1
+    },
+    textShadowRadius: 2,
+    fontWeight: 'bold',
+    color: '#ffffff'
+  },
+
+  topContainer: {
     width: '100%',
-    height: '90%',
+    height: '57%',
     alignItems: 'center',
     padding: 8
   },
@@ -41,6 +79,39 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
 
+  timeButton: {
+    flex: 1,
+    borderColor: 'black',
+    borderRadius: 8,
+    borderWidth: 1,
+    backgroundColor: 'lightblue',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  colorButton: {
+    borderColor: 'black',
+    borderRadius: 8,
+    borderWidth: 1,
+    backgroundColor: 'lightblue',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '30%',
+    alignSelf: 'center'
+  },
+
+  timeButtonDisabled: {
+    flex: 1,
+    borderRadius: 8,
+    backgroundColor: 'lightgray',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
   weekdayButtons: {
     flex: 1,
     justifyContent: 'center',
@@ -66,9 +137,13 @@ export const styles = StyleSheet.create({
     color: 'black'
   },
 
+  bottomContainerWrapper: {
+    flex: 1,
+    width: '100%'
+  },
+
   bottomContainer: {
-    flex: 0.75,
-    alignItems: 'flex-start',
+    flexGrow: 1,
   },
 
   addSectorClockContainer: {
@@ -112,7 +187,7 @@ export const styles = StyleSheet.create({
   },
 
   navigatorIndicator: {
-    backgroundColor: 'white'
+    backgroundColor: '#ffffff'
   },
 
   navigatorText: {
@@ -180,26 +255,23 @@ export const styles = StyleSheet.create({
   },
 
   editColOne: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
     gap: 16,
-    marginStart: 15
+    marginStart: 15,
   },
 
   editColTwo: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    gap: 16
+    alignItems: 'center',
+    gap: 16,
   },
 
   editTimeColumn: {
     flex: 2.4,
     justifyContent: 'center',
-    alignItems: 'flex-start',
   },
 
   trashColumn: {
@@ -223,7 +295,8 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 8,
-    padding: 2
+    padding: 2,
+    flex: 1
   },
 
   sectorText: {
@@ -233,8 +306,10 @@ export const styles = StyleSheet.create({
   },
 
   colorBox: {
-    width: 16,
-    height: 16
+    width: 20,
+    height: 20,
+    borderColor: 'black',
+    borderWidth: 1
   },
 
   header: {
@@ -284,6 +359,25 @@ export const styles = StyleSheet.create({
     borderColor: 'black',
   },
 
+  addSectorButtonContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    alignSelf: 'flex-end'
+  },
+
+  saveOrCancelButton: {
+    padding: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'lightblue',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'black',
+    gap: 10,
+    width: '45%'
+  },
+
   pinContainer: {
     marginTop: 100,
     alignSelf: 'center',
@@ -291,6 +385,7 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: 220,
   },
+
   box: {
     width: 50,
     height: 60,

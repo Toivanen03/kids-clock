@@ -1,4 +1,4 @@
-import { Text, View, Pressable, Alert } from "react-native";
+import { Text, View, Pressable, Alert, ScrollView } from "react-native";
 import Svg, { Circle, Path } from 'react-native-svg';
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faSun, faMoon, faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -17,7 +17,6 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
     const { setSectors } = useSettings();
     const { currentWeekday } = useClock({ test: false, speed: 0 });
     const [selectedDay, setSelectedDay] = useState(currentWeekday);
-    const [selectedSector, setSelectedSector] = useState<Sector | undefined>(undefined);
     const [sectorToEdit, setSectorToEdit] = useState<Sector | undefined>(undefined);
     const [amEvents, pmEvents, fullDayEvents] = SplitSectors(selectedDay);
     const [am, setAm] = useState(true);
@@ -45,7 +44,7 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
             <View key={index}>
                 <View style={styles.sectorsRow}>
                     <Pressable
-                        onPressIn={() => setSelectedSector(property)}
+                        onPressIn={() => setSectorToEdit(property)}
                         style={{ flexDirection: "row", width: "100%", alignItems: "center" }}
                     >
                         <View style={styles.colorColumn}>
@@ -53,7 +52,7 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                         </View>
 
                         <View style={styles.nameColumn}>
-                            <Text style={styles.sectorPreviewText}>{property.name}</Text>
+                            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.sectorPreviewText}>{property.name}</Text>
                         </View>
 
                         <View style={styles.timeColumn}>
@@ -70,15 +69,6 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                         </Pressable>
                     </Pressable>
                 </View>
-                
-                {selectedSector && selectedSector.id === property.id &&
-                    <Pressable
-                        onPressIn={() => setSectorToEdit(property)}
-                        style={styles.editSectorButton}
-                    >
-                        <Text>Muokkaa</Text>
-                    </Pressable>
-                }
             </View>
         );
     }
@@ -165,7 +155,7 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                         <View style={styles.addSectorAMbuttonContainer}>
                             <Pressable onPressIn={() => setAm(false)} onPressOut={() => setAm(true)}>
                                 <View style={{ ...styles.previewButton, padding: 10 }}>
-                                    <FontAwesomeIcon icon={icon} size={50} color="white" />
+                                    <FontAwesomeIcon icon={icon} size={50} color="#ffffff" />
                                 </View>
                             </Pressable>
                         </View>
@@ -175,12 +165,22 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                 </View>
             </View>
 
-            <View style={styles.bottomContainer}>
-                {sectorToEdit ? (
-                    <EditSector sector={[sectorToEdit]} />
-                ) : (
-                    fullDayEvents.map((s, i) => formatSectorRow(s, i))
-                )}
+            <View style={styles.bottomContainerWrapper}>
+                <ScrollView style={styles.bottomContainer}>
+                    {sectorToEdit ? (
+                        <EditSector sector={sectorToEdit} setSectorToEdit={setSectorToEdit} />
+                    ) : (
+                        fullDayEvents.map((s, i) => formatSectorRow(s, i))
+                    )}
+
+                    {!sectorToEdit && 
+                        <View style={{...styles.lockButton, backgroundColor: 'lightblue', marginStart: 15, marginTop: 15 }}>
+                            <Pressable onPressIn={() => setSectorToEdit({id: 0, name: "", activeDays: [], color: ""})}>
+                                <Text>Uusi aikataulu</Text>
+                            </Pressable>
+                        </View>
+                    }
+                </ScrollView>
             </View>
         </View>
     );

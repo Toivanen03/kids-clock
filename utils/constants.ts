@@ -1,3 +1,5 @@
+export const generateId = () => Date.now() + Math.floor(Math.random() * 1000);
+
 export const clockLayout = {
     cx: 100,
     cy: 100,

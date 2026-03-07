@@ -2,6 +2,7 @@ import { createContext, useState, useEffect } from 'react';
 import { SettingsContextType, Props } from '../types/types';
 import { toDecimalHours } from '../utils/timeConversion';
 import { Sector, Settings } from '../types/types';
+import { generateId } from '../utils/constants';
 
 export const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
@@ -39,20 +40,20 @@ export const SettingsProvider = ({ children }: Props) => {
     secondHand: secondHand,
   };
 
-  const generateId = () => Date.now() + Math.floor(Math.random() * 1000);
+
 
   const [sectors, setSectors] = useState<Sector[]>([
     {
       id: generateId(),
-      name: "Uninukkuma-aika",
+      name: "Uni",
       activeDays: [
         { day: 'mon', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
-        { day: 'tue', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
+        { day: 'tue', start: toDecimalHours({ hours: 18, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
         { day: 'wed', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
-        { day: 'thu', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
+        { day: 'thu', start: toDecimalHours({ hours: 19, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
         { day: 'fri', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
-        { day: 'sat', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
-        { day: 'sun', start: toDecimalHours({ hours: 20, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
+        { day: 'sat', start: toDecimalHours({ hours: 22, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
+        { day: 'sun', start: toDecimalHours({ hours: 21, minutes: 0}), end: toDecimalHours({ hours: 6, minutes: 30 }) },
       ],
       color: "#E41A1C"
     },
@@ -106,6 +107,25 @@ export const SettingsProvider = ({ children }: Props) => {
     },
   ]);
 
+  const addSector = (sectorData: Omit<Sector, "id">) => {
+    const newSector: Sector = {
+      ...sectorData,
+      id: generateId(),
+    };
+
+    setSectors(prev => [...prev, newSector]);
+  };
+
+  const updateSector = (updatedSector: Sector) => {
+    setSectors(prev =>
+      prev.map(sector =>
+        sector.id === updatedSector.id
+          ? updatedSector
+          : sector
+      )
+    );
+  };
+
   return (
     <SettingsContext.Provider value={{
       secondHand, setSecondHand,
@@ -119,7 +139,8 @@ export const SettingsProvider = ({ children }: Props) => {
       autoLock, setAutoLock,
       pin, setPin,
       showCurrent, setShowCurrent,
-      showNext, setShowNext
+      showNext, setShowNext,
+      addSector, updateSector
     }}>
       {children}
     </SettingsContext.Provider>

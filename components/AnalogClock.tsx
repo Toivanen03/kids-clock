@@ -96,7 +96,7 @@ const AnalogClock = ({ time, now, isAM, currentWeekday }: AnalogClockProps) => {
                             onPressIn={() => { setPreview(true); setSecondaryView(true); }}
                             onPressOut={() => { setPreview(false); setSecondaryView(false) }}
                         >
-                            <FontAwesomeIcon icon={icon} size={50} color="white" />
+                            <FontAwesomeIcon icon={icon} size={50} color="#ffffff" />
                         </Pressable>
                     </View>
                 </View>

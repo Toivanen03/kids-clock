@@ -5,6 +5,7 @@ import ChildScreen from './screens/childScreen';
 import { styles } from './styles';
 import { SettingsProvider } from './hooks/SettingsContext';
 import ConfirmPin from './screens/ConfirmPin';
+import { SectorsProvider } from './hooks/SectorsContext';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -17,19 +18,21 @@ export default function App() {
       <NavigationContainer>
         <SafeAreaView style={{ flex: 1 }}>
           <SettingsProvider>
-            <Tab.Navigator
-              screenOptions={{
-                swipeEnabled: true,
-                tabBarIndicatorStyle: styles.navigatorIndicator,
-                tabBarStyle: styles.navigatorBg,
-                tabBarLabelStyle: styles.navigatorText
-              }}
-            >
-              <Tab.Screen name="Kello">
-                {() => <ChildScreen test={test} speed={speed} />}
-              </Tab.Screen>
-              <Tab.Screen name="Asetukset" component={ConfirmPin} />
-            </Tab.Navigator>
+            <SectorsProvider>
+              <Tab.Navigator
+                screenOptions={{
+                  swipeEnabled: true,
+                  tabBarIndicatorStyle: styles.navigatorIndicator,
+                  tabBarStyle: styles.navigatorBg,
+                  tabBarLabelStyle: styles.navigatorText
+                }}
+              >
+                <Tab.Screen name="Kello">
+                  {() => <ChildScreen test={test} speed={speed} />}
+                </Tab.Screen>
+                <Tab.Screen name="Asetukset" component={ConfirmPin} />
+              </Tab.Navigator>
+            </SectorsProvider>
           </SettingsProvider>
         </SafeAreaView>
       </NavigationContainer>

@@ -4,15 +4,15 @@ import React, { useState } from "react";
 import { styles } from "../styles";
 import CheckBox from "expo-checkbox";
 import { decimalToTime, toDecimalHours } from "../utils/timeConversion";
-import { useSettings } from "../hooks/useSettings";
 import { WEEKDAY_LABELS, weekdaysOrdered } from "../types/types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import ColorSelector from "../components/ColorPicker";
 import { confirmContrast } from "../utils/confirmColorContrast";
+import { useSectors } from "../hooks/useSectors";
 
 const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
     const { id: sectorId, name: sectorName, color: sectorColor } = sector;
-    const { sectors, addSector, updateSector } = useSettings();
+    const { sectors, addSector, updateSector } = useSectors();
     const [currentlyEditingTime, setCurrentlyEditingTime] = useState<{day: Weekday, type: 'start' | 'end'} | null>(null);
 
     const fullSector = sectors.find(s => s.id === sectorId);

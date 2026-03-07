@@ -7,36 +7,30 @@ import { useFocusEffect } from "@react-navigation/native";
 import SectorsScreen from "./SectorsScreen";
 
 const SettingsScreen = () => {
-    const {
-        secondHand, setSecondHand, 
-        minuteHand, setMinuteHand, 
-        hourHand, setHourHand, 
-        numbers, setNumbers, 
-        easyClock, setEasyClock, 
-        setLocked, timeToLockdown,
-        autoLock, setAutoLock,
-        showCurrent, setShowCurrent,
-        showNext, setShowNext,
-        setPin
-    } = useSettings();
+    const { settings, updateSetting, timeToLockdown, updatePin } = useSettings();
             
     const [delay, setDelay] = useState(timeToLockdown);
     const [showSectors, setShowSectors] = useState(false);
 
+    const easyClock = settings.easyClock;
+    const secondHand = settings.secondHand;
+    const minuteHand = settings.minuteHand;
+    const hourHand = settings.hourHand;
+
     useEffect(() => {
-        if (autoLock) {
+        if (settings.autoLock) {
             const interval = setInterval(() => {
                 setDelay(delay -1)
 
                 if (delay <= 1) {
-                    setLocked(true);
+                    updateSetting("locked", true);
                 }
                     return delay - 1;
             }, 1000);
 
             return () => clearInterval(interval);
         };
-    }, [delay, autoLock]);
+    }, [delay, settings.autoLock]);
 
     useFocusEffect(
         useCallback(() => {
@@ -51,42 +45,42 @@ const SettingsScreen = () => {
                     <SafeAreaView style={styles.settingsScreen}>
                         <View style={styles.settingsRow}>
                             <Text>Helppo kello</Text>
-                            <Switch value={easyClock} onValueChange={setEasyClock} />
+                            <Switch value={easyClock} onValueChange={(value) => updateSetting("easyClock", value)} />
                         </View>
 
                         <View style={styles.settingsRow}>
                             <Text>Sekuntiviisari</Text>
-                            <Switch value={secondHand} onValueChange={setSecondHand} />
+                            <Switch value={secondHand} onValueChange={(value) => updateSetting("secondHand", value)} />
                         </View>
 
                         <View style={styles.settingsRow}>
                             <Text>Minuuttiviisari</Text>
-                            <Switch value={minuteHand} onValueChange={setMinuteHand} disabled={easyClock} />
+                            <Switch value={minuteHand} onValueChange={(value) => updateSetting("minuteHand", value)} disabled={easyClock} />
                         </View>
 
                         <View style={styles.settingsRow}>
                             <Text>Tuntiviisari</Text>
-                            <Switch value={hourHand} onValueChange={setHourHand} disabled={easyClock}/>
+                            <Switch value={hourHand} onValueChange={(value) => updateSetting("hourHand", value)} disabled={easyClock}/>
                         </View>
 
                         <View style={styles.settingsRow}>
                             <Text>Numerot</Text>
-                            <Switch value={numbers} onValueChange={setNumbers} />
+                            <Switch value={settings.analogNumbers} onValueChange={(value) => updateSetting("analogNumbers", value)} />
                         </View>
 
                         <View style={styles.settingsRow}>
                             <Text>Näytä kuluvan tapahtuvan teksti</Text>
-                            <Switch value={showCurrent} onValueChange={setShowCurrent} />
+                            <Switch value={settings.showCurrent} onValueChange={(value) => updateSetting("showCurrent", value)} />
                         </View>
 
                         <View style={styles.settingsRow}>
                             <Text>Näytä seuraavan tapahtuman teksti</Text>
-                            <Switch value={showNext} onValueChange={setShowNext} />
+                            <Switch value={settings.showNext} onValueChange={(value) => updateSetting("showNext", value)} />
                         </View>
 
                         <View style={styles.settingsRow}>
                             <Text>Asetusten lukitus (30 sek.)</Text>
-                            <Switch value={autoLock} onValueChange={setAutoLock} />
+                            <Switch value={settings.autoLock} onValueChange={(value) => updateSetting("autoLock", value)} />
                         </View>
 
                         <View style={{ flexDirection: 'row', padding: 10, justifyContent: 'space-between', alignItems: 'center' }}>
@@ -97,7 +91,7 @@ const SettingsScreen = () => {
                             </View>
 
                             <View style={styles.lockButton}>
-                                <Pressable onPressIn={() => setLocked(true)}>
+                                <Pressable onPressIn={() => updateSetting("locked", true)}>
                                     <Text>Lukitse</Text>
                                 </Pressable>
                             </View>
@@ -105,7 +99,7 @@ const SettingsScreen = () => {
 
                         <View style={{ flexDirection: 'row', padding: 10, justifyContent: 'space-between', alignItems: 'center' }}>
                             <View style={{...styles.lockButton, backgroundColor: 'lightblue'}}>
-                                <Pressable onPressIn={() => { setLocked(true); setPin(1234) }}>
+                                <Pressable onPressIn={() => { updateSetting("locked", true); updatePin(0) }}>
                                     <Text>Vaihda PIN</Text>
                                 </Pressable>
                             </View>

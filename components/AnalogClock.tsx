@@ -11,6 +11,7 @@ import type { Sector } from "../types/types";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { useSettings } from "../hooks/useSettings";
+import { useSectors } from "../hooks/useSectors";
 import EasyClock from "./EasyClock";
 import useSplitSectors from "../hooks/useSplitSectors";
 import EventDisplay from "./EventDisplay";
@@ -18,7 +19,8 @@ import EventDisplay from "./EventDisplay";
 const AnalogClock = ({ time, now, isAM, currentWeekday }: AnalogClockProps) => {
     const [preview, setPreview] = useState(false);
     const [secondaryView, setSecondaryView] = useState(false);
-    const { sectors, settings } = useSettings();
+    const { settings } = useSettings();
+    const { sectors } = useSectors();
     const dailySectors: Sector[] = sectors;
 
     const [amEvents, pmEvents] = useSplitSectors(currentWeekday);

@@ -11,7 +11,7 @@ const ConfirmPin = () => {
     const inputRef = useRef<TextInput>(null);
     const newPinRef = useRef<TextInput>(null);
     const confirmNewPinRef = useRef<TextInput>(null);
-    const { pin, setPin, locked, setLocked } = useSettings();
+    const { settings, updateSetting, pin, updatePin } = useSettings();
     const [newPin, setNewPin] = useState("");
     const [newPinConfirm, setNewPinConfirm] = useState("");
 
@@ -29,7 +29,7 @@ const ConfirmPin = () => {
         ]).start();
     };
 
-    const defaultPin = pin === 1234;
+    const defaultPin = pin === 0;
 
     const inputValue = defaultPin
         ? (newPin.length < 4 ? newPin : newPinConfirm)
@@ -51,36 +51,32 @@ const ConfirmPin = () => {
         if (!defaultPin) {
             if (code.length === 4 && Number(code) === pin) {
                 setCode("");
-                setLocked(false);
+                updateSetting("locked", false);
             } else if (code.length === 4) {
                 triggerShake();
                 setCode("");
-                setLocked(true);
+                updateSetting("locked", true);
             }
         } else {
-            if (newPin.length === 4 && newPinConfirm.length === 4 && Number(newPin) !== 1234) {
+            if (newPin.length === 4 && newPinConfirm.length === 4) {
                 if (newPin === newPinConfirm) {
-                    setPin(Number(newPin));
+                    updatePin(Number(newPin));
                     setNewPin("");
                     setNewPinConfirm("");
-                    setLocked(false);
+                    updateSetting("locked", false);
                 } else {
                     setNewPinConfirm("");
                     triggerShake();
                 }
-            } else if (Number(newPin) === 1234) {
-                setNewPin("");
-                setNewPinConfirm("");
-                triggerShake();
             }
         }
     }, [code, pin, newPin, newPinConfirm, defaultPin]);
 
     return (
         <>
-            {locked ? (
+            {settings.locked ? (
                 <Animated.View style={{ transform: [{ translateX: shakeAnim }] }}>
-                    <Text style={styles.changePINheader}>{Number(newPin) !== 1234 ? displayText : "PIN ei ole kelvollinen.\nValitse uusi."}</Text>
+                    <Text style={styles.changePINheader}>{displayText}</Text>
                     <TouchableOpacity
                         activeOpacity={1}
                         onPress={() => inputRefToUse.current?.focus()}

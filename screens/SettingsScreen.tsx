@@ -79,7 +79,7 @@ const SettingsScreen = () => {
                         </View>
 
                         <View style={styles.settingsRow}>
-                            <Text>Asetusten lukitus (30 sek.)</Text>
+                            <Text>Asetusten autom. lukitus (30 sek.)</Text>
                             <Switch value={settings.autoLock} onValueChange={(value) => updateSetting("autoLock", value)} />
                         </View>
 

@@ -17,25 +17,9 @@ export const WEEKDAY_LABELS: Record<Weekday, string> = {
 
 export type EventWithDay = { sector: Sector; start: number; end: number, name: string };
 
-export const predefinedColors = [ '#E41A1C', '#377EB8', '#4DAF4A', '#FF7F00', '#984EA3', '#00CED1', '#D2B48C', '#000000', '#A9A9A9', '#FFFFFF' ] as const;
-export type Color = typeof predefinedColors[number];
-
-export const COLOR_LABELS: Record<Color, string> = {
-    '#E41A1C': 'Punainen',
-    '#377EB8': 'Sininen',
-    '#4DAF4A': 'Vihreä',
-    '#FF7F00': 'Keltainen',
-    '#984EA3': 'Violetti',
-    '#00CED1': 'Turkoosi',
-    '#D2B48C': 'Okra',
-    '#000000': 'Musta',
-    '#A9A9A9': 'Harmaa',
-    '#FFFFFF': 'Valkoinen',
-};
-
 export type SectorProps = {
     sector: Sector;
-    setSectorToEdit: Dispatch<React.SetStateAction<Sector | undefined>>
+    setSectorToEdit: Dispatch<React.SetStateAction<Sector | undefined>>;
 };
 
 export interface Props {
@@ -48,12 +32,18 @@ export type Time = {
     seconds: number;
 };
 
+export type PinResetAnswer = {
+    result: boolean;
+    answerText: string;
+}
+
 export interface SettingsContextType {
     settings: Settings;
     updateSetting: <K extends keyof Settings>(setting: K, value: Settings[K]) => void;
     timeToLockdown: number;
     pin: number;
     updatePin: (newPin: number) => void;
+    resetPin: (question: number[], answer: number) => PinResetAnswer;
 };
 
 export type Settings = {

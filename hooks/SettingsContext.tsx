@@ -3,6 +3,7 @@ import { SettingsContextType, Props } from '../types/types';
 import { Settings } from '../types/types';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { defaultSettings } from '../utils/constants';
+import { PinResetAnswer } from '../types/types';
 
 export const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
@@ -82,11 +83,22 @@ export const SettingsProvider = ({ children }: Props) => {
     }
   }, [settingsLoaded, settings.easyClock]);
 
+  const resetPin = (question: number[], answer: number): PinResetAnswer => {
+    const correctAnswer = question.reduce((acc, curr) => acc + curr, 0);
+
+    if (answer === correctAnswer) {
+      AsyncStorage.removeItem("kidsClockPin");
+      return {result: true, answerText: "PIN-koodi nollattu."};
+    } else {
+      return {result: false, answerText: "Väärä vastaus."};
+    }
+  };
+
   return (
     <SettingsContext.Provider value={{
       settings, updateSetting,
       pin, updatePin,
-      timeToLockdown,
+      timeToLockdown, resetPin
     }}>
       {children}
     </SettingsContext.Provider>

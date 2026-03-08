@@ -66,8 +66,8 @@ const AnalogClock = ({ time, now, isAM, currentWeekday }: AnalogClockProps) => {
                                 isAM && preview ? "Ilta" : "Huominen"
                             ))}
                     </View>
-
-                    <Svg height="60%" width="95%" viewBox="0 0 200 200">
+                    
+                    <Svg height="80%" width="95%" viewBox="0 0 200 200">
                         <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="#eee" />
 
                         {events.map((s, i) => 

@@ -29,16 +29,19 @@ const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [error, setError] = useState(false);
+    const [sectorSaved, setSectorSaved] = useState(false);
 
     const saveSector = () => {
         const saveOrUpdateSector = () => {
             if (newSector) {
                 addSector({ name, activeDays: schedule, color})
+                setSectorSaved(true);
             } else {
                 updateSector({ id: sectorId, name, activeDays: schedule, color });
+                setSectorSaved(true);
             };
 
-            setSectorToEdit(undefined)
+            if (sectorSaved) setSectorToEdit(undefined);
 
             Alert.alert(
                 newSector ? "Sektori tallennettu onnistuneesti!" : "Muutokset tallennettu" , "",
@@ -92,6 +95,25 @@ const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
 
         if (!error) saveOrUpdateSector();
     };
+
+    const cancelSectorEdit = () => {
+        Alert.alert(
+                "Muutoksia",
+                "Varmista, että asettamasi väri on riittävän erottuva. Voit muokata väriä tarvittaessa myöhemmin. Haluatko jatkaa tallentamista vai valita uuden värin?",
+            [{
+                    text: "Hylkää muutokset",
+                    style: "destructive",
+                    onPress: () => {
+                        setSectorToEdit(undefined)
+                    }
+                },
+                {
+                    text: "Peruuta",
+                    style: "default",
+                    onPress: () => {}
+                }
+            ])
+    }
 
     const startEditingTime = (day: Weekday, type: 'start' | 'end') => {
         const scheduleItem = schedule.find(s => s.day === day);
@@ -271,7 +293,7 @@ const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
                 </View>
 
                 <View style={styles.addSectorButtonContainer}>
-                    <Pressable style={styles.saveOrCancelButton} onPressIn={() => setSectorToEdit(undefined)}>
+                    <Pressable style={styles.saveOrCancelButton} onPressIn={() => cancelSectorEdit()}>
                         <Text>Peruuta</Text>
                     </Pressable>
                 </View>

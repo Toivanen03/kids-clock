@@ -314,7 +314,7 @@ export const styles = StyleSheet.create({
 
   header: {
     backgroundColor: '#ccc',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
   },
 

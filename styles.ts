@@ -52,7 +52,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '57%',
     alignItems: 'center',
-    padding: 8
+    padding: 8,
   },
 
   sectorEditContainer: {

@@ -12,6 +12,7 @@ import SplitSectors from "../hooks/useSplitSectors";
 import { useClock } from "../hooks/useClock";
 import EditSector from "./EditSector";
 import { useSectors } from "../hooks/useSectors";
+import { useNavigationPrevent } from "../hooks/useNavigationPrevent";
 
 const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
     const { deleteSector } = useSectors();
@@ -20,6 +21,9 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
     const [sectorToEdit, setSectorToEdit] = useState<Sector | undefined>(undefined);
     const [amEvents, pmEvents, fullDayEvents] = SplitSectors(selectedDay);
     const [am, setAm] = useState(true);
+
+    const { sectorEdited, sectorSaved} = useNavigationPrevent();
+    const enabled = !(sectorEdited && !sectorSaved);
     
     const icon = am ? faSun : faMoon;
     const backIcon = faArrowLeft;
@@ -118,9 +122,9 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
         <View style={{ flex: 1 }}>
             <View style={styles.topContainer}>
                 <View style={styles.addSectorTopBanner}>
-                    <Pressable onPressIn={() => setShowSectors(false)}>
-                        <View style={styles.backButtonContainer}>
-                            <FontAwesomeIcon icon={backIcon} size={30} color="black" />
+                    <Pressable onPressIn={() => setShowSectors(false)} disabled={!enabled}>
+                        <View style={enabled ? styles.backButtonContainer : {...styles.backButtonContainer, borderColor: 'gray'}}>
+                            <FontAwesomeIcon icon={backIcon} size={30} color={enabled ? "black" : "gray"} />
                         </View>
                     </Pressable>
 
@@ -153,9 +157,9 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                         </Svg>
 
                         <View style={styles.addSectorAMbuttonContainer}>
-                            <Pressable onPressIn={() => setAm(false)} onPressOut={() => setAm(true)}>
+                            <Pressable onPress={() => setAm(!am)}>
                                 <View style={{ ...styles.previewButton, padding: 10 }}>
-                                    <FontAwesomeIcon icon={icon} size={50} color="#ffffff" />
+                                    <FontAwesomeIcon icon={icon} size={50} color="#ffd341" />
                                 </View>
                             </Pressable>
                         </View>

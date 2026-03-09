@@ -54,12 +54,12 @@ const SettingsScreen = () => {
                         </View>
 
                         <View style={styles.settingsRow}>
-                            <Text>Minuuttiviisari</Text>
+                            <Text style={`${easyClock}` && {color: 'gray'}}>Minuuttiviisari</Text>
                             <Switch value={minuteHand} onValueChange={(value) => updateSetting("minuteHand", value)} disabled={easyClock} />
                         </View>
 
                         <View style={styles.settingsRow}>
-                            <Text>Tuntiviisari</Text>
+                            <Text style={`${easyClock}` && {color: 'gray'}}>Tuntiviisari</Text>
                             <Switch value={hourHand} onValueChange={(value) => updateSetting("hourHand", value)} disabled={easyClock}/>
                         </View>
 

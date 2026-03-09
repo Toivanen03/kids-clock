@@ -35,6 +35,10 @@ export type Time = {
 export type PinResetAnswer = {
     result: boolean;
     answerText: string;
+};
+
+export interface ConfirmPinProps {
+  setShowTab: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface SettingsContextType {
@@ -44,6 +48,13 @@ export interface SettingsContextType {
     pin: number;
     updatePin: (newPin: number) => void;
     resetPin: (question: number[], answer: number) => PinResetAnswer;
+};
+
+export interface NavigationPreventContextType {
+    sectorEdited: boolean;
+    setSectorEdited: (v: boolean) => void;
+    sectorSaved: boolean;
+    setSectorSaved: (v: boolean) => void;
 };
 
 export type Settings = {

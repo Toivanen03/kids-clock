@@ -25,6 +25,8 @@ const AnalogClock = ({ time, now, isAM, currentWeekday }: AnalogClockProps) => {
 
     const [amEvents, pmEvents] = useSplitSectors(currentWeekday);
 
+    const rowHeight = (settings.showCurrent && settings.showNext) ? 54 : (settings.showCurrent || settings.showNext) ? 27 : 0;
+
     const tomorrowEvents: Sector[] = dailySectors.map(s => {
         const newActiveDays = s.activeDays
             .map(d => {
@@ -67,7 +69,7 @@ const AnalogClock = ({ time, now, isAM, currentWeekday }: AnalogClockProps) => {
                             ))}
                     </View>
                     
-                    <Svg height="80%" width="95%" viewBox="0 0 200 200">
+                    <Svg height="60%" width="95%" viewBox="0 0 200 200">
                         <Circle cx={clockLayout.cx} cy={clockLayout.cy} r={clockLayout.r} fill="#eee" />
 
                         {events.map((s, i) => 
@@ -91,14 +93,16 @@ const AnalogClock = ({ time, now, isAM, currentWeekday }: AnalogClockProps) => {
                         )}
                     </Svg>
 
-                    {!preview && <EventDisplay time={time} events={events} easyClock={false} />}
+                    {!preview ? (
+                        <EventDisplay time={time} events={events} easyClock={false} />
+                    ) : (<View style={{height: rowHeight}} />)}
 
                     <View style={styles.previewButton}>
                         <Pressable
                             onPressIn={() => { setPreview(true); setSecondaryView(true); }}
                             onPressOut={() => { setPreview(false); setSecondaryView(false) }}
                         >
-                            <FontAwesomeIcon icon={icon} size={50} color="#ffffff" />
+                            <FontAwesomeIcon icon={icon} size={50} color="#ffd341" />
                         </Pressable>
                     </View>
                 </View>

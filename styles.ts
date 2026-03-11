@@ -196,6 +196,7 @@ export const styles = StyleSheet.create({
   },
 
   eventContainer: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
   },

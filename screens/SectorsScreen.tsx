@@ -4,26 +4,24 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faSun, faMoon, faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { clockLayout, getSectorPath } from "../utils/constants";
 import AnalogClockNumbers from "../components/AnalogClockNumbers";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { styles } from "../styles";
 import { Sector, AddSectorProps, weekdaysOrdered } from "../types/types";
 import { decimalToTime } from "../utils/timeConversion";
-import SplitSectors from "../hooks/useSplitSectors";
 import { useClock } from "../hooks/useClock";
 import EditSector from "./EditSector";
 import { useSectors } from "../hooks/useSectors";
-import { useNavigationPrevent } from "../hooks/useNavigationPrevent";
+import { useSectorState } from "../hooks/useSectorState";
+import { SectorsContext } from "../hooks/SectorsContext";
 
 const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
-    const { deleteSector } = useSectors();
-    const { currentWeekday } = useClock({ test: false, speed: 0 });
-    const [selectedDay, setSelectedDay] = useState(currentWeekday);
+    const { currentWeekday } = useClock();
+    const { selectedDay, setSelectedDay } = useContext(SectorsContext)!;
     const [sectorToEdit, setSectorToEdit] = useState<Sector | undefined>(undefined);
-    const [amEvents, pmEvents, fullDayEvents] = SplitSectors(selectedDay);
+    const { deleteSector, amEvents, pmEvents, fullDayEvents } = useSectors();
     const [am, setAm] = useState(true);
 
-    const { sectorEdited, sectorSaved} = useNavigationPrevent();
-    const enabled = !(sectorEdited && !sectorSaved);
+    const { showTabs } = useSectorState();
     
     const icon = am ? faSun : faMoon;
     const backIcon = faArrowLeft;
@@ -77,8 +75,6 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
         );
     }
 
-    
-
     function handleSectorDelete(property: Sector) {
         const id = property.id;
         const name = property.name;
@@ -122,9 +118,9 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
         <View style={{ flex: 1 }}>
             <View style={styles.topContainer}>
                 <View style={styles.addSectorTopBanner}>
-                    <Pressable onPressIn={() => setShowSectors(false)} disabled={!enabled}>
-                        <View style={enabled ? styles.backButtonContainer : {...styles.backButtonContainer, borderColor: 'gray'}}>
-                            <FontAwesomeIcon icon={backIcon} size={30} color={enabled ? "black" : "gray"} />
+                    <Pressable onPressIn={() => setShowSectors(false)} disabled={!showTabs}>
+                        <View style={showTabs ? styles.backButtonContainer : {...styles.backButtonContainer, borderColor: 'gray'}}>
+                            <FontAwesomeIcon icon={backIcon} size={30} color={showTabs ? "black" : "gray"} />
                         </View>
                     </Pressable>
 

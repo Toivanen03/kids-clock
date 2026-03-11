@@ -39,7 +39,7 @@ export type PinResetAnswer = {
 
 export interface ConfirmPinProps {
   setShowTab: React.Dispatch<React.SetStateAction<boolean>>;
-}
+};
 
 export interface SettingsContextType {
     settings: Settings;
@@ -50,23 +50,25 @@ export interface SettingsContextType {
     resetPin: (question: number[], answer: number) => PinResetAnswer;
 };
 
-export interface NavigationPreventContextType {
+export interface SectorStateContextType {
     sectorEdited: boolean;
-    setSectorEdited: (v: boolean) => void;
+    setSectorEdited: (val: boolean) => void;
     sectorSaved: boolean;
-    setSectorSaved: (v: boolean) => void;
+    setSectorSaved: (val: boolean) => void;
+    showTabs: boolean;
+    setShowTabs: (val: boolean) => void;
 };
 
 export type Settings = {
-  secondHand: boolean;
-  minuteHand: boolean;
-  hourHand: boolean;
-  showCurrent: boolean;
-  showNext: boolean;
-  locked: boolean;
-  autoLock: boolean;
-  easyClock: boolean;
-  analogNumbers: boolean;
+    secondHand: boolean;
+    minuteHand: boolean;
+    hourHand: boolean;
+    showCurrent: boolean;
+    showNext: boolean;
+    locked: boolean;
+    autoLock: boolean;
+    easyClock: boolean;
+    analogNumbers: boolean;
 };
 
 export type NewSector = Omit<Sector, "id">;
@@ -77,6 +79,14 @@ export type SectorsContextType = {
     updateSector: (sector: Sector) => void;
     deleteSector: (id: number) => void;
     setAllSectors: (sectors: Sector[]) => void;
+    preview: boolean;
+    setPreview: (val: boolean) => void;
+    events: Sector[];
+    amEvents: Sector[];
+    pmEvents: Sector[];
+    fullDayEvents: Sector[];
+    selectedDay: Weekday;
+    setSelectedDay: (val: Weekday) => void;
 };
 
 export type DaySchedule = {
@@ -129,15 +139,6 @@ export interface EasyClockProps {
 export interface AnalogNumberProps {
     rotation?: number;
 }
-export interface ChildScreenProps {
-    test: boolean;
-    speed: number;
-}
-
-export type UseClockOptions = {
-    test: boolean;
-    speed: number;
-};
 
 export interface AddSectorProps {
     setShowSectors: (val: boolean) => void;
@@ -152,4 +153,6 @@ export type UseClockReturn = {
     };
     isAM: boolean;
     currentWeekday: Weekday;
+    selectedDay: Weekday;
+    setSelectedDay: (val: Weekday) => void;
 };

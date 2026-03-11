@@ -2,7 +2,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { SettingsProvider } from './hooks/SettingsContext';
 import { SectorsProvider } from './hooks/SectorsContext';
-import { NavigationPreventProvider } from './hooks/NavigationPreventContext';
+import { SectorStateProvider } from './hooks/SectorStateContext';
 import MainTabs from './MainTabs';
 
 export default function App() {
@@ -13,9 +13,9 @@ export default function App() {
         <SafeAreaView style={{ flex: 1 }}>
           <SettingsProvider>
             <SectorsProvider>
-              <NavigationPreventProvider>
+              <SectorStateProvider>
                 <MainTabs />
-              </NavigationPreventProvider>
+              </SectorStateProvider>
             </SectorsProvider>
           </SettingsProvider>
         </SafeAreaView>

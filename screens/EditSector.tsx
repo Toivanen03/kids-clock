@@ -1,6 +1,6 @@
 import { Text, View, TextInput, Pressable, Modal, Alert } from "react-native";
 import { SectorProps, Weekday } from "../types/types";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { styles } from "../styles";
 import CheckBox from "expo-checkbox";
 import { decimalToTime, toDecimalHours } from "../utils/timeConversion";
@@ -9,6 +9,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import ColorSelector from "../components/ColorPicker";
 import { confirmContrast } from "../utils/confirmColorContrast";
 import { useSectors } from "../hooks/useSectors";
+import { useSectorState } from "../hooks/useSectorState"
 
 const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
     const { id: sectorId, name: sectorName, color: sectorColor } = sector;
@@ -20,7 +21,11 @@ const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
     const newSector = sectorId === 0;
 
     const [name, setName] = useState(newSector ? "" : sectorName);
-    const [schedule, setSchedule] = useState(() => sectorSchedule);
+    const initialScheduleRef = useRef(() => {
+        const fullSector = sectors.find(s => s.id === sectorId);
+        return fullSector ? [...fullSector.activeDays] : [];
+    });
+    const [schedule, setSchedule] = useState(initialScheduleRef.current);
     const [color, setColor] = useState(sectorColor ? sectorColor : '#ffffff');
     const [showColorPanel, setShowColorPanel] = useState(false);
     const [editingDate, setEditingDate] = useState<Date | null>(null);
@@ -28,37 +33,100 @@ const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
     const [selectedDays, setSelectedDays] = useState(newSector ? [] : schedule.map(s => s.day));
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [error, setError] = useState(false);
-    const [sectorSaved, setSectorSaved] = useState(false);
+    const [initialSector, setInitialSector] = useState({
+            id: sectorId,
+            name: sectorName,
+            color: sectorColor ?? '#ffffff',
+            activeDays: sectorSchedule
+        });
+
+    const { sectorEdited, setSectorEdited, sectorSaved, setSectorSaved, setShowTabs } = useSectorState();
+
+    const inputRef = useRef<TextInput>(null);
+
+    const reset = () => {
+        setSectorToEdit(undefined);
+        setSectorEdited(false);
+        setSectorToEdit(undefined);
+        setShowTabs(true);
+        setInitialSector({
+            id: sectorId,
+            name: sectorName,
+            color: sectorColor ?? '#ffffff',
+            activeDays: sectorSchedule
+        })
+    };
+
+    useEffect(() => {
+        if (newSector) {
+            const edited = name !== "" || color !== "#ffffff" || schedule.length > 0;
+            setSectorEdited(edited);
+            if (edited) {
+                setSectorSaved(false);
+                setShowTabs(false);
+            };
+            return;
+        }
+
+        let edited = false;
+
+        if (name !== initialSector.name) edited = true;
+        if (color !== initialSector.color) edited = true;
+
+        if (schedule.length !== initialSector.activeDays.length) edited = true;
+
+        if (!edited) {
+            const length = Math.min(schedule.length, initialSector.activeDays.length);
+            for (let i = 0; i < length; i++) {
+                const s1 = schedule[i];
+                const s2 = initialSector.activeDays[i];
+                if (!s2) continue;
+                if (s1.day !== s2.day || s1.start !== s2.start || s1.end !== s2.end) {
+                    edited = true;
+                    break;
+                }
+            }
+        }
+
+        setSectorEdited(edited);
+
+        if (edited) {
+            setShowTabs(false);
+            setSectorSaved(false);
+        };
+    }, [name, color, schedule, initialSector, newSector]);
+
+    useEffect(() => {
+        if (modalVisible) {
+            const timer = setTimeout(() => {
+                inputRef.current?.focus();
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [modalVisible]);
 
     const saveSector = () => {
         const saveOrUpdateSector = () => {
             if (newSector) {
                 addSector({ name, activeDays: schedule, color})
-                setSectorSaved(true);
             } else {
                 updateSector({ id: sectorId, name, activeDays: schedule, color });
-                setSectorSaved(true);
             };
 
-            if (sectorSaved) setSectorToEdit(undefined);
+            setSectorSaved(true);
 
             Alert.alert(
                 newSector ? "Sektori tallennettu onnistuneesti!" : "Muutokset tallennettu" , "",
-            [{text: "OK", style: "default", onPress: () => {}}])
+            [{text: "OK", style: "default", onPress: () => {reset()}}])
         };
 
         if (!name || !color || schedule.length === 0) {
-            setError(true);
-
             Alert.alert(
                 "Pakollisia tietoja puuttuu!",
                 "Valitse sektorille nimi, väri sekä viikkoaikataulu.",
             [{text: "OK", style: "default", onPress: () => {}}])
             return;
         } else if (!newSector && !sectorId) {
-            setError(true);
-
             Alert.alert(
                 "VIRHE",
                 "Palaa edelliseen näkymään ja yritä valita muokattava sektori uudelleen. Mikäli virhe toistuu, poista muokattava sektori ja syötä aikataulu uudelleen.",
@@ -67,43 +135,39 @@ const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
         }
 
         if (!confirmContrast(color)) {
-            setError(true);
-
             Alert.alert(
                 "Valittu väri on vaalea.",
                 "Varmista, että asettamasi väri on riittävän erottuva. Voit muokata väriä tarvittaessa myöhemmin. Haluatko jatkaa tallentamista vai valita uuden värin?",
             [{
                     text: "Jatka tallentamista",
                     style: "default",
-                    onPress: () => {
-                        setError(false);
-                        saveOrUpdateSector();
-                    }
+                    onPress: () => saveOrUpdateSector()
                 },
                 {
                     text: "Valitse uusi väri",
                     style: "default",
-                    onPress: () => {
-                        setError(false);
-                        setShowColorPanel(true);
-                    }
+                    onPress: () => setShowColorPanel(true)
                 }
             ])
 
         return;
         }
 
-        if (!error) saveOrUpdateSector();
+        saveOrUpdateSector();
     };
 
     const cancelSectorEdit = () => {
-        Alert.alert(
-                "Muutoksia",
-                "Varmista, että asettamasi väri on riittävän erottuva. Voit muokata väriä tarvittaessa myöhemmin. Haluatko jatkaa tallentamista vai valita uuden värin?",
+        if (!sectorSaved && sectorEdited) {
+            Alert.alert(
+                "Muutoksia ei ole tallennettu.",
+                "Haluatko poistua tallentamatta?",
             [{
                     text: "Hylkää muutokset",
                     style: "destructive",
                     onPress: () => {
+                        setSectorSaved(true);
+                        setSectorEdited(false);
+                        setShowTabs(true);
                         setSectorToEdit(undefined)
                     }
                 },
@@ -113,7 +177,11 @@ const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
                     onPress: () => {}
                 }
             ])
-    }
+        } else if (!sectorEdited) {
+            setShowTabs(true);
+            setSectorToEdit(undefined);
+        }
+    };
 
     const startEditingTime = (day: Weekday, type: 'start' | 'end') => {
         const scheduleItem = schedule.find(s => s.day === day);
@@ -147,39 +215,39 @@ const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
                     <View style={{ width: '1%' }} />
                 </View>
 
-                    <Modal
-                        visible={modalVisible}
-                        transparent
-                        animationType="slide"
-                        onRequestClose={() => setModalVisible(false)}
+                <Modal
+                    visible={modalVisible}
+                    transparent
+                    animationType="slide"
+                    onRequestClose={() => setModalVisible(false)}
+                >
+                    <View
+                        style={{
+                            flex: 1,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            backgroundColor: "#00000088",
+                        }}
                     >
                         <View
                             style={{
-                                flex: 1,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                backgroundColor: "#00000088",
+                                width: "80%",
+                                backgroundColor: "#ffffff",
+                                padding: 20,
+                                borderRadius: 8,
                             }}
                         >
-                            <View
-                                style={{
-                                    width: "80%",
-                                    backgroundColor: "#ffffff",
-                                    padding: 20,
-                                    borderRadius: 8,
-                                }}
-                            >
                             <TextInput
+                                ref={inputRef}
                                 value={name}
                                 onChangeText={setName}
-                                autoFocus
                                 placeholder={name ? name : "Sektorin nimi"}
                                 style={{ borderBottomWidth: 1, padding: 8 }}
                             />
 
                             <Pressable
                                 onPress={() => setModalVisible(false)}
-                                style={{ marginTop: 20, alignItems: "center" }}
+                                style={{...styles.lockButton, alignSelf: 'center', backgroundColor: 'lightblue', marginTop: 20}}
                             >
                                 <Text>Tallenna nimi</Text>
                             </Pressable>
@@ -286,15 +354,16 @@ const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
             </View>
 
             <View style={{ flex: 1, flexDirection: 'row', padding: 10, justifyContent: 'space-between', alignItems: 'center' }}>
+                {!sectorSaved && sectorEdited &&
                 <View style={styles.addSectorButtonContainer}>
-                    <Pressable style={styles.saveOrCancelButton} onPressIn={() => saveSector()}>
+                    <Pressable style={styles.saveOrCancelButton} onPress={saveSector}>
                         <Text>Tallenna</Text>
                     </Pressable>
-                </View>
+                </View>}
 
                 <View style={styles.addSectorButtonContainer}>
-                    <Pressable style={styles.saveOrCancelButton} onPressIn={() => cancelSectorEdit()}>
-                        <Text>Peruuta</Text>
+                    <Pressable style={styles.saveOrCancelButton} onPress={cancelSectorEdit}>
+                        <Text>{sectorSaved || !sectorEdited ? "Poistu" : "Peruuta"}</Text>
                     </Pressable>
                 </View>
             </View>

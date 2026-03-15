@@ -21,7 +21,11 @@ const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
     const newSector = sectorId === 0;
 
     const [name, setName] = useState(newSector ? "" : sectorName);
-    const [schedule, setSchedule] = useState(() => sectorSchedule);
+    const initialScheduleRef = useRef(() => {
+        const fullSector = sectors.find(s => s.id === sectorId);
+        return fullSector ? [...fullSector.activeDays] : [];
+    });
+    const [schedule, setSchedule] = useState(initialScheduleRef.current);
     const [color, setColor] = useState(sectorColor ? sectorColor : '#ffffff');
     const [showColorPanel, setShowColorPanel] = useState(false);
     const [editingDate, setEditingDate] = useState<Date | null>(null);

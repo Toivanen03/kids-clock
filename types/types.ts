@@ -73,6 +73,11 @@ export type Settings = {
 
 export type NewSector = Omit<Sector, "id">;
 
+export interface ClockContextType {
+    isAM: boolean;
+    currentWeekday: Weekday;
+};
+
 export type SectorsContextType = {
     sectors: Sector[];
     addSector: (sector: NewSector) => void;

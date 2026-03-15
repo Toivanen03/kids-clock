@@ -1,61 +1,65 @@
-import React, { createContext, useEffect, useState, useMemo } from "react";
+import React, { createContext, useEffect, useState, useMemo, useCallback, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SectorsContextType, Sector, NewSector } from "../types/types";
 import { generateId } from "../utils/constants";
-import { useClock } from "./useClock";
 import { Weekday } from "../types/types";
+import { ClockContext } from "./ClockProvider";
 
 export const SectorsContext = createContext<SectorsContextType | undefined>(undefined);
 
 export const SectorsProvider = ({ children }: { children: React.ReactNode }) => {
-    const { isAM, currentWeekday } = useClock();
+    const { isAM, currentWeekday } = useContext(ClockContext);
     const [selectedDay, setSelectedDay] = useState<Weekday>(currentWeekday);
     const [sectors, setSectors] = useState<Sector[]>([]);
     const [preview, setPreview] = useState(false);
 
-    const defaultSectors: Sector[] = [];
-
-    const saveSectors = async (data: Sector[]) => {
-        await AsyncStorage.setItem("kidsClockSectors", JSON.stringify(data));
-    };
-
-    const loadSectors = async () => {
-        try {
-            const stored = await AsyncStorage.getItem("kidsClockSectors");
-            if (stored) {
-                setSectors(JSON.parse(stored));
-            } else {
-                setSectors(defaultSectors);
-                saveSectors(defaultSectors);
-            }
-        } catch (e) {
-            setSectors(defaultSectors);
-        }
-    };
-
-    useEffect(() => {
-        loadSectors();
+    const saveSectors = useCallback(async (data: Sector[]) => {
+        await AsyncStorage.setItem(
+            "kidsClockSectors",
+            JSON.stringify(data)
+        );
     }, []);
 
-    const setAllSectors = (data: Sector[]) => {
-        setSectors(data);
-        saveSectors(data);
-    };
+    useEffect(() => {
+        const load = async () => {
+            const stored = await AsyncStorage.getItem("kidsClockSectors");
+            if (stored) setSectors(JSON.parse(stored));
+        };
 
-    const addSector = (sector: NewSector) => {
+        load();
+    }, []);
+
+    const setAllSectors = useCallback(
+        (updater: Sector[] | ((prev: Sector[]) => Sector[])) => {
+            setSectors(prev => {
+                const next =
+                    typeof updater === "function"
+                        ? (updater as (p: Sector[]) => Sector[])(prev)
+                        : updater;
+
+                saveSectors(next);
+                return next;
+            });
+        },
+        [saveSectors]
+    );
+
+    const addSector = useCallback((sector: NewSector) => {
         const newSector: Sector = { ...sector, id: generateId() };
-        setAllSectors([...sectors, newSector]);
-    };
+        setAllSectors(prev => [...prev, newSector]);
+    }, []);
 
-    const updateSector = (sector: Sector) => {
-        setAllSectors(sectors.map(s => (s.id === sector.id ? sector : s)));
-    };
+    const updateSector = useCallback((sector: Sector) => {
+        setAllSectors(prev =>
+            prev.map(s => (s.id === sector.id ? sector : s))
+        );
+    }, []);
 
-    const deleteSector = (id: number) => {
-        setAllSectors(sectors.filter(s => s.id !== Number(id)));
-    };
+    const deleteSector = useCallback((id: number) => {
+        setAllSectors(prev => prev.filter(s => s.id !== id));
+    }, []);
 
-    const splitSectorByNoon = (sector: Sector): [Sector[], Sector[]] => {
+const splitSectorByNoon = useCallback((sector: Sector): [Sector[], Sector[]] => {
         const am: Sector[] = [];
         const pm: Sector[] = [];
 
@@ -73,7 +77,7 @@ export const SectorsProvider = ({ children }: { children: React.ReactNode }) => 
         });
 
         return [am, pm];
-    };
+    }, []);
 
     const normalizeSectorForTomorrow = (sector: Sector): Sector | null => {
         const newActiveDays = sector.activeDays
@@ -117,24 +121,32 @@ export const SectorsProvider = ({ children }: { children: React.ReactNode }) => 
         return isAM ? pmEvents : tomorrowEvents;
     }, [preview, isAM, amEvents, pmEvents, tomorrowEvents]);
 
+    const value = useMemo(() => ({
+        sectors,
+        addSector,
+        updateSector,
+        deleteSector,
+        setAllSectors,
+        preview,
+        setPreview,
+        events,
+        amEvents,
+        pmEvents,
+        fullDayEvents,
+        selectedDay,
+        setSelectedDay
+    }), [
+        sectors,
+        preview,
+        events,
+        amEvents,
+        pmEvents,
+        fullDayEvents,
+        selectedDay
+    ]);
+
     return (
-        <SectorsContext.Provider
-            value={{
-                sectors,
-                addSector,
-                updateSector,
-                deleteSector,
-                setAllSectors,
-                preview,
-                setPreview,
-                events,
-                amEvents,
-                pmEvents,
-                fullDayEvents,
-                selectedDay,
-                setSelectedDay
-            }}
-        >
+        <SectorsContext.Provider value={value}>
             {children}
         </SectorsContext.Provider>
     );

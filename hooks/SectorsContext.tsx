@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState, useMemo, useCallback, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SectorsContextType, Sector, NewSector } from "../types/types";
+import { SectorsContextType, Sector, NewSector, weekdays } from "../types/types";
 import { generateId } from "../utils/constants";
 import { Weekday } from "../types/types";
 import { ClockContext } from "./ClockProvider";
@@ -59,36 +59,62 @@ export const SectorsProvider = ({ children }: { children: React.ReactNode }) => 
         setAllSectors(prev => prev.filter(s => s.id !== id));
     }, []);
 
-const splitSectorByNoon = useCallback((sector: Sector): [Sector[], Sector[]] => {
-        const am: Sector[] = [];
-        const pm: Sector[] = [];
+    const linearize = (start: number, end: number) => {
+        if (end <= start) end += 24;
+        return { start, end };
+    };
+
+    const splitSector = (start: number, end: number) => {
+        const splits = [12, 24, 36];
+        const result = [];
+
+        let currentStart = start;
+
+        for (const split of splits) {
+            if (split > start && split < end) {
+                result.push({ start: currentStart, end: split });
+                currentStart = split;
+            }
+        }
+
+        result.push({ start: currentStart, end });
+
+        return result;
+    };
+
+    const normalizeSector = (sector: Sector) => {
+        const result: Sector[] = [];
 
         sector.activeDays.forEach(d => {
-            if (d.start < 12) {
-                if (d.end > 12) {
-                    am.push({ ...sector, activeDays: [{ ...d, end: 12 }] });
-                    pm.push({ ...sector, activeDays: [{ ...d, start: 12 }] });
-                } else {
-                    am.push({ ...sector, activeDays: [d] });
-                }
-            } else {
-                pm.push({ ...sector, activeDays: [d] });
-            }
+
+            const { start, end } = linearize(d.start, d.end);
+            const parts = splitSector(start, end);
+
+            parts.forEach(p => {
+
+                const dayOffset = Math.floor(p.start / 24);
+                const dayIndex = weekdays.indexOf(d.day);
+                const newDay = weekdays[(dayIndex + dayOffset) % 7];
+
+                result.push({
+                    ...sector,
+                    activeDays: [{
+                        day: newDay,
+                        start: p.start % 24,
+                        end: p.end % 24
+                    }]
+                });
+
+            });
+
         });
 
-        return [am, pm];
-    }, []);
-
-    const normalizeSectorForTomorrow = (sector: Sector): Sector | null => {
-        const newActiveDays = sector.activeDays
-            .map(d => {
-                let start = d.start > d.end ? 0 : d.start;
-                let end = d.start < 12 && d.end >= 12 ? 12 : d.end;
-                return { ...d, start, end };
-            })
-            .filter(d => d.start !== d.end);
-        return newActiveDays.length > 0 ? { ...sector, activeDays: newActiveDays } : null;
+        return result;
     };
+
+    const normalizedEvents = useMemo(() => {
+        return sectors.flatMap(normalizeSector);
+    }, [sectors]);
 
     const fullDayEvents = useMemo(() => {
         return sectors
@@ -99,27 +125,31 @@ const splitSectorByNoon = useCallback((sector: Sector): [Sector[], Sector[]] => 
             .filter((s): s is Sector => s !== null);
     }, [sectors, selectedDay]);
 
-    const [amEvents, pmEvents] = useMemo(() => {
-        const am: Sector[] = [];
-        const pm: Sector[] = [];
-        fullDayEvents.forEach(s => {
-            const [a, p] = splitSectorByNoon(s);
-            am.push(...a);
-            pm.push(...p);
-        });
-        return [am, pm];
-    }, [fullDayEvents]);
-
-    const tomorrowEvents = useMemo(() => {
-        return sectors
-            .map(normalizeSectorForTomorrow)
-            .filter((s): s is Sector => s !== null);
-    }, [sectors]);
-
     const events = useMemo(() => {
-        if (!preview) return isAM ? amEvents : pmEvents;
-        return isAM ? pmEvents : tomorrowEvents;
-    }, [preview, isAM, amEvents, pmEvents, tomorrowEvents]);
+        return normalizedEvents
+            .filter(e => e.activeDays[0].day === selectedDay)
+            .filter(e => {
+                if (preview) {
+                    return isAM
+                        ? e.activeDays[0].start >= 12
+                        : e.activeDays[0].start < 12;
+                } else {
+                    return isAM
+                        ? e.activeDays[0].start < 12
+                        : e.activeDays[0].start >= 12;
+                }
+            });
+    }, [normalizedEvents, selectedDay, isAM, preview]);
+
+    const amEvents = normalizedEvents.filter(
+        e => e.activeDays[0].day === selectedDay &&
+            e.activeDays[0].start < 12
+    );
+
+    const pmEvents = normalizedEvents.filter(
+        e => e.activeDays[0].day === selectedDay &&
+            e.activeDays[0].start >= 12
+    );
 
     const value = useMemo(() => ({
         sectors,
@@ -142,7 +172,8 @@ const splitSectorByNoon = useCallback((sector: Sector): [Sector[], Sector[]] => 
         amEvents,
         pmEvents,
         fullDayEvents,
-        selectedDay
+        selectedDay,
+        isAM
     ]);
 
     return (

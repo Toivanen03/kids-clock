@@ -1,21 +1,23 @@
-import { createContext, useState, useEffect, useMemo } from "react";
-import { ClockContextType, Props } from "../types/types";
-import { weekdays } from "../types/types";
+import { createContext, useMemo } from "react";
+import { ClockContextType, Props, weekdays } from "../types/types";
+import { useClock } from "./useClock";
 
 export const ClockContext = createContext<ClockContextType>({isAM: true, currentWeekday: weekdays[new Date().getDay()]});
 
 export const ClockProvider = ({ children }: Props) => {
-    const [now, setNow] = useState(new Date());
+    const { now } = useClock();
 
-    useEffect(() => {
-        const timer = setInterval(() => setNow(new Date()), 1000);
-        return () => clearInterval(timer);
-    }, []);
+    const hour = now.getHours();
+    const day = now.getDay();
 
     const value = useMemo(() => ({
-        isAM: now.getHours() < 12,
-        currentWeekday: weekdays[now.getDay()]
-    }), [now]);
+        isAM: hour < 12,
+        currentWeekday: weekdays[day]
+    }), [hour, day]);
 
-    return <ClockContext.Provider value={value}>{children}</ClockContext.Provider>;
+    return (
+        <ClockContext.Provider value={value}>
+            {children}
+        </ClockContext.Provider>
+    );
 };

@@ -62,7 +62,7 @@ const ChildScreen = () => {
                         )}
                     </Svg>
 
-                    <EventDisplay time={time} events={events} easyClock={false} />
+                    {!preview ? ( <EventDisplay time={time} events={events} easyClock={false} /> ) : (<View style={{height: 120}} />)}
 
                     <View style={styles.previewButton}>
                         <Pressable

@@ -54,13 +54,26 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                         </View>
 
                         <View style={styles.nameColumn}>
-                            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.sectorPreviewText}>{property.name}</Text>
+                            <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                
+                                <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.sectorPreviewText, { flex: 1 }]}>
+                                    {property.name}
+                                </Text>
+
+                                {endTime[0] < startTime[0] && selectedDay === "mon" && (
+                                    <Text>(pe)   </Text>
+                                )}
+
+                            </View>
                         </View>
 
                         <View style={styles.timeColumn}>
-                            <Text style={styles.sectorPreviewText}>
-                                {decimalToTime(startTime[0])} - {decimalToTime(endTime[0])}
-                            </Text>
+                            <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                <Text style={styles.sectorPreviewText}>{decimalToTime(startTime[0])} - {decimalToTime(endTime[0])}</Text>
+                                {endTime[0] < startTime[0] && selectedDay === "sun" &&
+                                    <Text>   (ma)</Text>
+                                }
+                            </View>
                         </View>
 
                         <Pressable

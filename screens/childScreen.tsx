@@ -13,16 +13,27 @@ import EasyClock from "../components/EasyClock";
 import EventDisplay from "../components/EventDisplay";
 import { useClock } from "../hooks/useClock";
 import { useSectors } from "../hooks/useSectors";
+import { Sector } from "../types/types";
 
 const ChildScreen = () => {
     const [secondaryView, setSecondaryView] = useState(false);
     const { settings } = useSettings();
-    const { time, now, isAM, currentWeekday } = useClock();
+    const { time, isAM } = useClock();
     const { events, preview, setPreview } = useSectors();
 
     const icon = preview
         ? (isAM ? faSun : faMoon)
         : (isAM ? faMoon : faSun);
+
+    const flatEvents = events.flatMap(s =>
+        s.activeDays.map(d => ({ sector: s, start: d.start, end: d.end, name: s.name }))
+    );
+
+    const endTimes = flatEvents.map(e => e.end);
+
+    const showSector = (sector: Sector) => {
+        console.log(sector)
+    }
 
     return (
         <>
@@ -48,6 +59,7 @@ const ChildScreen = () => {
                                     key={`${i}-${j}`}
                                     d={getSectorPath(d.start, d.end)}
                                     fill={s.color}
+                                    fillOpacity={0.85}
                                 />
                                 ) : null
                             )
@@ -60,9 +72,10 @@ const ChildScreen = () => {
                         {(settings.hourHand || settings.minuteHand || settings.secondHand) && (
                             <ClockHands time={time} active={!secondaryView} />
                         )}
+                        
                     </Svg>
 
-                    {!preview ? ( <EventDisplay time={time} events={events} easyClock={false} /> ) : (<View style={{height: 120}} />)}
+                    {(!preview && events && endTimes) ? ( <EventDisplay time={time} events={events} easyClock={false} endTimes={endTimes} /> ) : (<View style={{height: 120}} />)}
 
                     <View style={styles.previewButton}>
                         <Pressable
@@ -74,7 +87,7 @@ const ChildScreen = () => {
                     </View>
                 </View>
             ) : (
-                <EasyClock time={time} now={now} isAM={isAM} events={events} currentWeekday={currentWeekday} />
+                <EasyClock time={time} events={events} endTimes={endTimes} />
             )}
         </>
     );

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Line } from "react-native-svg";
+import { Line, Circle } from "react-native-svg";
 import { clockLayout } from "../utils/constants";
 import { ClockHandsProps } from "../types/types";
 import { useSettings } from "../hooks/useSettings";
@@ -103,6 +103,28 @@ const ClockHands: FC<ClockHandsProps> = ({ time, active }) => {
                         stroke="#ffffff"
                         strokeWidth={1}
                         strokeLinecap="round"
+                    />
+
+                    <Circle
+                        cx={cx}
+                        cy={cy}
+                        r={4}
+                        strokeWidth={1}
+                        stroke="gray"
+                    />
+
+                    <Circle
+                        cx={cx}
+                        cy={cy}
+                        r={3}
+                        fill="darkgray"
+                    />
+
+                    <Circle
+                        cx={cx}
+                        cy={cy}
+                        r={1}
+                        fill="black"
                     />
                 </>
             }

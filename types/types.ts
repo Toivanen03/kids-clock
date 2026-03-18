@@ -131,14 +131,13 @@ export interface EventDisplayProps {
     time: Time;
     events: Sector[];
     easyClock: boolean;
+    endTimes: number[];
 }
 
 export interface EasyClockProps {
     time: Time;
-    now: Date,
-    isAM: boolean;
     events: Sector[];
-    currentWeekday: Weekday;
+    endTimes: number[]
 };
 
 export interface AnalogNumberProps {

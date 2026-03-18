@@ -10,6 +10,7 @@ import ColorSelector from "../components/ColorPicker";
 import { confirmContrast } from "../utils/confirmColorContrast";
 import { useSectors } from "../hooks/useSectors";
 import { useSectorState } from "../hooks/useSectorState"
+import { text } from "@fortawesome/fontawesome-svg-core";
 
 const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
     const { id: sectorId, name: sectorName, color: sectorColor } = sector;
@@ -105,27 +106,45 @@ const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
         }
     }, [modalVisible]);
 
-    const saveSector = () => {
-        const saveOrUpdateSector = () => {
-            if (newSector) {
-                addSector({ name, activeDays: schedule, color})
-            } else {
-                updateSector({ id: sectorId, name, activeDays: schedule, color });
-            };
-
-            setSectorSaved(true);
-
-            Alert.alert(
-                newSector ? "Sektori tallennettu onnistuneesti!" : "Muutokset tallennettu" , "",
-            [{text: "OK", style: "default", onPress: () => {reset()}}])
+    const saveOrUpdateSector = () => {
+        if (newSector) {
+            addSector({ name, activeDays: schedule, color})
+        } else {
+            updateSector({ id: sectorId, name, activeDays: schedule, color });
         };
 
+        setSectorSaved(true);
+
+        Alert.alert(
+            newSector ? "Sektori tallennettu onnistuneesti!" : "Muutokset tallennettu" , "",
+        [{text: "OK", style: "default", onPress: () => {reset()}}])
+    };
+
+    const checkTimes = () => {
+        if (schedule.some(d => d.start >= d.end)) {
+            Alert.alert("Aikatauluissa on puolenyön ylittäviä merkintöjä.", "Haluatko jatkaa tallentamista?",
+                [{
+                    text: "Jatka tallentamista",
+                    style: "default",
+                    onPress: () => saveOrUpdateSector()
+                },
+                {
+                    text: "Peruuta",
+                    style: "cancel",
+                    onPress: () => {}
+                }
+            ])
+        } else saveOrUpdateSector();
+    };
+
+    const saveSector = () => {
         if (!name || !color || schedule.length === 0) {
             Alert.alert(
                 "Pakollisia tietoja puuttuu!",
                 "Valitse sektorille nimi, väri sekä viikkoaikataulu.",
             [{text: "OK", style: "default", onPress: () => {}}])
             return;
+
         } else if (!newSector && !sectorId) {
             Alert.alert(
                 "VIRHE",
@@ -153,7 +172,7 @@ const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
         return;
         }
 
-        saveOrUpdateSector();
+        checkTimes();
     };
 
     const cancelSectorEdit = () => {
@@ -184,9 +203,10 @@ const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
     };
 
     const startEditingTime = (day: Weekday, type: 'start' | 'end') => {
+        const start = type === "start";
         const scheduleItem = schedule.find(s => s.day === day);
-        const hours = type === 'start' ? Math.floor(scheduleItem?.start ?? 8) : Math.floor(scheduleItem?.end ?? 17);
-        const minutes = type === 'start' ? Math.round(((scheduleItem?.start ?? 8) % 1) * 60) : Math.round(((scheduleItem?.end ?? 17) % 1) * 60);
+        const hours = start ? Math.floor(scheduleItem?.start ?? 8) : Math.floor(scheduleItem?.end ?? 17);
+        const minutes = start ? Math.round(((scheduleItem?.start ?? 8) % 1) * 60) : Math.round(((scheduleItem?.end ?? 17) % 1) * 60);
         setCurrentlyEditingTime({ day, type });
         setEditingDate(new Date(new Date().setHours(hours, minutes, 0, 0)));
     };
@@ -320,6 +340,7 @@ const EditSector = ({ sector, setSectorToEdit }: SectorProps) => {
                             </View>
                         )
                     })}
+
                     {currentlyEditingTime && editingDate && (
                         <DateTimePicker
                             value={editingDate}

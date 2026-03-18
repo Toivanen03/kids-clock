@@ -10,7 +10,7 @@ import ClockHands from "./ClockHands";
 import EventDisplay from "./EventDisplay";
 import { sectorPath } from "../utils/constants";
 
-const EasyClock = ({ time, events }: EasyClockProps) => {
+const EasyClock = ({ time, events, endTimes }: EasyClockProps) => {
     const { settings } = useSettings()
     const rotation = -(time.hours % 12 + time.minutes / 60 + time.seconds / 3600) * 30;
     const offsetY = 25;
@@ -93,7 +93,7 @@ const EasyClock = ({ time, events }: EasyClockProps) => {
                     Aika
                 </Text>
                 
-                <EventDisplay time={time} events={events} easyClock={true} />
+                <EventDisplay time={time} events={events} easyClock={true} endTimes={endTimes} />
                 
             </Svg>
         </View>

@@ -13,7 +13,6 @@ import EasyClock from "../components/EasyClock";
 import EventDisplay from "../components/EventDisplay";
 import { useClock } from "../hooks/useClock";
 import { useSectors } from "../hooks/useSectors";
-import { Sector } from "../types/types";
 
 const ChildScreen = () => {
     const [secondaryView, setSecondaryView] = useState(false);
@@ -30,10 +29,6 @@ const ChildScreen = () => {
     );
 
     const endTimes = flatEvents.map(e => e.end);
-
-    const showSector = (sector: Sector) => {
-        console.log(sector)
-    }
 
     return (
         <>

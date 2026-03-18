@@ -6,14 +6,15 @@ import { EventWithDay, EventDisplayProps } from "../types/types";
 import { styles } from "../styles";
 import { useSettings } from "../hooks/useSettings";
 
-const EventDisplay = ({ time, events, easyClock }: EventDisplayProps) => {
+const EventDisplay = ({ time, events, endTimes, easyClock }: EventDisplayProps) => {
     const { settings } = useSettings();
+
     const showCurrent = settings.showCurrent;
     const showNext = settings.showNext;
     const now = time.hours + time.minutes / 60 + time.seconds / 3600;
 
     const flatEvents: EventWithDay[] = events.flatMap(s =>
-        s.activeDays.map(d => ({ sector: s, start: d.start, end: d.end, name: s.name }))
+        s.activeDays.map(d => ({ sector: s, start: d.start, end: endTimes[1], name: s.name }))
     );
 
     const onGoing = flatEvents

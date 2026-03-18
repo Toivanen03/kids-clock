@@ -4,15 +4,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faSun, faMoon, faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { clockLayout, getSectorPath } from "../utils/constants";
 import AnalogClockNumbers from "../components/AnalogClockNumbers";
-import { useState, useContext } from "react";
+import { useState, useContext, useCallback } from "react";
 import { styles } from "../styles";
-import { Sector, AddSectorProps, weekdaysOrdered } from "../types/types";
+import { Sector, AddSectorProps, weekdaysOrdered, Weekday, WEEKDAY_LABELS } from "../types/types";
 import { decimalToTime } from "../utils/timeConversion";
 import { useClock } from "../hooks/useClock";
 import EditSector from "./EditSector";
 import { useSectors } from "../hooks/useSectors";
 import { useSectorState } from "../hooks/useSectorState";
 import { SectorsContext } from "../hooks/SectorsContext";
+import { useFocusEffect } from "@react-navigation/native";
 
 const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
     const { currentWeekday } = useClock();
@@ -22,6 +23,12 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
     const [am, setAm] = useState(true);
 
     const { showTabs } = useSectorState();
+
+    useFocusEffect(
+        useCallback(() => {
+            return () => setSelectedDay(currentWeekday);
+        }, [])
+    );
     
     const icon = am ? faSun : faMoon;
     const backIcon = faArrowLeft;
@@ -36,6 +43,22 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
         thu: 'TO',
         fri: 'PE',
         sat: 'LA'
+    };
+
+    function renderOvernightLabel(type: "next" | "prev", start: number, end: number, selectedDay: Weekday) {
+        if (end >= start) return null;
+
+        const next = type === "next";
+        const currentIndex = weekdaysOrdered.indexOf(selectedDay);
+
+        const dayIndex = next
+            ? (currentIndex + 1) % weekdaysOrdered.length
+            : (currentIndex + weekdaysOrdered.length) % weekdaysOrdered.length;
+
+        const day = weekdaysOrdered[dayIndex];
+        const textToRender = WEEKDAY_LABELS[day].slice(0, 2);
+
+        return <Text>{next && "  "}({textToRender.toLowerCase()}){!next && "  "}</Text>;
     };
 
     function formatSectorRow(property: Sector, index: number) {
@@ -57,22 +80,20 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                             <View style={{ flexDirection: "row", alignItems: "center" }}>
                                 
                                 <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.sectorPreviewText, { flex: 1 }]}>
-                                    {property.name}
+                                    {property.name}{"   "}
                                 </Text>
 
-                                {endTime[0] < startTime[0] && selectedDay === "mon" && (
-                                    <Text>(pe)   </Text>
-                                )}
+                                {renderOvernightLabel("prev", startTime[0], endTime[0], selectedDay)}
 
                             </View>
                         </View>
 
                         <View style={styles.timeColumn}>
                             <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                <Text style={styles.sectorPreviewText}>{decimalToTime(startTime[0])} - {decimalToTime(endTime[0])}</Text>
-                                {endTime[0] < startTime[0] && selectedDay === "sun" &&
-                                    <Text>   (ma)</Text>
-                                }
+                                <Text style={styles.sectorPreviewText}>{decimalToTime(startTime[0])} - {decimalToTime(endTime[0])}{" "}</Text>
+
+                                {renderOvernightLabel("next", startTime[0], endTime[0], selectedDay)}
+
                             </View>
                         </View>
 
@@ -122,6 +143,9 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                             {buttonText[d]}
                         </Text>
                     </Pressable>
+                    <View>
+                        {isActive && <Text style={{fontSize: 8, marginTop: 3}}>{isToday ? "Tänään" : "Valittu"}</Text>}
+                    </View>
                 </View>
             )}
         )

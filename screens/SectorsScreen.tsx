@@ -19,7 +19,7 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
     const { currentWeekday } = useClock();
     const { selectedDay, setSelectedDay } = useContext(SectorsContext)!;
     const [sectorToEdit, setSectorToEdit] = useState<Sector | undefined>(undefined);
-    const { deleteSector, amEvents, pmEvents, fullDayEvents } = useSectors();
+    const { deleteSector, deleteSectorDay, amEvents, pmEvents, normalizedEvents } = useSectors();
     const [am, setAm] = useState(true);
 
     const { showTabs } = useSectorState();
@@ -29,7 +29,7 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
             return () => setSelectedDay(currentWeekday);
         }, [])
     );
-    
+
     const icon = am ? faSun : faMoon;
     const backIcon = faArrowLeft;
     const trashIcon = faTrash;
@@ -44,6 +44,77 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
         fri: 'PE',
         sat: 'LA'
     };
+
+    function mergeAcrossDays(allEvents: Sector[], selectedDay: Weekday): Sector[] {
+        const result: Sector[] = [];
+
+        const today = allEvents.filter(e => e.activeDays[0].day === selectedDay);
+
+        const dayIndex = weekdaysOrdered.indexOf(selectedDay);
+        const nextDay = weekdaysOrdered[(dayIndex + 1) % 7];
+
+        const next = allEvents.filter(e => e.activeDays[0].day === nextDay);
+
+        const grouped = new Map<number, { today: Sector[], next: Sector[] }>();
+
+        [...today, ...next].forEach(e => {
+            const id = e.id;
+            if (!grouped.has(id)) {
+                grouped.set(id, { today: [], next: [] });
+            }
+
+            if (e.activeDays[0].day === selectedDay) {
+                grouped.get(id)!.today.push(e);
+            } else {
+                grouped.get(id)!.next.push(e);
+            }
+        });
+
+        grouped.forEach(({ today, next }) => {
+            const sortedToday = today.sort(
+                (a, b) => a.activeDays[0].start - b.activeDays[0].start
+            );
+
+            const evening = sortedToday.find(
+                e => e.activeDays[0].end === 0 || e.activeDays[0].end === 24
+            );
+
+            const morning = next.find(
+                e => e.activeDays[0].start === 0
+            );
+
+            if (evening && morning) {
+                result.push({
+                    ...evening,
+                    activeDays: [{
+                        day: selectedDay,
+                        start: evening.activeDays[0].start,
+                        end: morning.activeDays[0].end
+                    }]
+                });
+            } else if (sortedToday.length === 1) {
+                const only = sortedToday[0];
+
+                if (only.activeDays[0].start === 0) return;
+
+                result.push(only);
+            } else if (sortedToday.length > 1) {
+                const first = sortedToday[0];
+                const last = sortedToday[sortedToday.length - 1];
+
+                result.push({
+                    ...first,
+                    activeDays: [{
+                        day: selectedDay,
+                        start: last.activeDays[0].start,
+                        end: first.activeDays[0].end
+                    }]
+                });
+            }
+        });
+
+        return result;
+    }
 
     function renderOvernightLabel(type: "next" | "prev", start: number, end: number, selectedDay: Weekday) {
         if (end >= start) return null;
@@ -62,8 +133,10 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
     };
 
     function formatSectorRow(property: Sector, index: number) {
-        const startTime = property.activeDays.flatMap(d => d.start);
-        const endTime = property.activeDays.flatMap(d => d.end);
+        const d = property.activeDays[0];
+
+        const startTime = d.start;
+        const endTime = d.end;
 
         return (
             <View key={index}>
@@ -83,16 +156,16 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                                     {property.name}{"   "}
                                 </Text>
 
-                                {renderOvernightLabel("prev", startTime[0], endTime[0], selectedDay)}
+                                {renderOvernightLabel("prev", startTime, endTime, selectedDay)}
 
                             </View>
                         </View>
 
                         <View style={styles.timeColumn}>
                             <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                <Text style={styles.sectorPreviewText}>{decimalToTime(startTime[0])} - {decimalToTime(endTime[0])}{" "}</Text>
+                                <Text style={styles.sectorPreviewText}>{decimalToTime(startTime)} - {decimalToTime(endTime)}{" "}</Text>
 
-                                {renderOvernightLabel("next", startTime[0], endTime[0], selectedDay)}
+                                {renderOvernightLabel("next", startTime, endTime, selectedDay)}
 
                             </View>
                         </View>
@@ -122,7 +195,14 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                     style: "cancel"
                 },
                 {
-                    text: "Poista",
+                    text: "Poista valitulta päivältä",
+                    style: "destructive",
+                    onPress: () => {
+                        deleteSectorDay(id, selectedDay);
+                    }
+                },
+                {
+                    text: "Poista kaikki",
                     style: "destructive",
                     onPress: () => {
                         deleteSector(id);
@@ -179,6 +259,7 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                                         key={`${i}-${j}`}
                                         d={getSectorPath(d.start, d.end)}
                                         fill={s.color}
+                                        fillOpacity={0.85}
                                     />
                                     ) : null
                                 )
@@ -207,7 +288,7 @@ const SectorsScreen = ({ setShowSectors }: AddSectorProps) => {
                     {sectorToEdit ? (
                         <EditSector sector={sectorToEdit} setSectorToEdit={setSectorToEdit} />
                     ) : (
-                        fullDayEvents.map((s, i) => formatSectorRow(s, i))
+                        mergeAcrossDays(normalizedEvents, selectedDay).map((s, i) => formatSectorRow(s, i))
                     )}
 
                     {!sectorToEdit && 

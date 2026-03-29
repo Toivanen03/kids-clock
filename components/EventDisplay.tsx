@@ -2,36 +2,27 @@ import { Text as SvgText } from "react-native-svg";
 import { View, Text } from "react-native";
 import { clockLayout } from "../utils/constants";
 import { decimalToTime } from "../utils/timeConversion";
-import { EventWithDay, EventDisplayProps } from "../types/types";
+import { EventDisplayProps } from "../types/types";
 import { styles } from "../styles";
 import { useSettings } from "../hooks/useSettings";
+import { getOnGoingAndNext } from "../utils/schedule";
+import { useClock } from "../hooks/useClock";
+import { useSectors } from "../hooks/useSectors";
 
-const EventDisplay = ({ time, events, endTimes, easyClock }: EventDisplayProps) => {
+const EventDisplay = ({ time, events, easyClock }: EventDisplayProps) => {
     const { settings } = useSettings();
+    const { currentWeekday } = useClock();
+    const { sectors } = useSectors();
+    const { ongoing, next } = getOnGoingAndNext(time, events, sectors, currentWeekday);
 
     const showCurrent = settings.showCurrent;
     const showNext = settings.showNext;
-    const now = time.hours + time.minutes / 60 + time.seconds / 3600;
-
-    const flatEvents: EventWithDay[] = events.flatMap(s =>
-        s.activeDays.map(d => ({ sector: s, start: d.start, end: endTimes[1], name: s.name }))
-    );
-
-    const onGoing = flatEvents
-        .slice()
-        .sort((a, b) => a.start - b.start)
-        .find(e => e.start <= now && e.end > now);
-
-    const next = flatEvents
-        .slice()
-        .sort((a, b) => a.start - b.start)
-        .find(e => e.start > now);
 
     return (
         <>
             {easyClock ? (
                 <>
-                    {onGoing && showCurrent &&
+                    {ongoing && showCurrent &&
                         <>
                             <SvgText
                                 x={clockLayout.cx}
@@ -52,7 +43,7 @@ const EventDisplay = ({ time, events, endTimes, easyClock }: EventDisplayProps) 
                                 fontWeight="bold"
                                 textAnchor="middle"
                             >
-                                {`${onGoing.name} kello ${decimalToTime(onGoing.end)} asti`}
+                                {`${ongoing.name} kello ${decimalToTime(ongoing.end)} asti`}
                             </SvgText>
                         </>
                     }
@@ -85,7 +76,7 @@ const EventDisplay = ({ time, events, endTimes, easyClock }: EventDisplayProps) 
                 </>
             ) : (
                 <View style={styles.eventContainer}>
-                    {onGoing && showCurrent && <Text style={styles.nowText}>Nyt: {`${onGoing.name} kello ${decimalToTime(onGoing.end)} asti`}</Text>}
+                    {ongoing && showCurrent && <Text style={styles.nowText}>Nyt: {`${ongoing.name} kello ${decimalToTime(ongoing.end)} asti`}</Text>}
                     {next && showNext && <Text style={styles.nextText}>Seuraavaksi: {`${next.name} kello ${decimalToTime(next.start)}`}</Text>}
                 </View>
             )}

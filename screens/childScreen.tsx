@@ -13,7 +13,6 @@ import EasyClock from "../components/EasyClock";
 import EventDisplay from "../components/EventDisplay";
 import { useClock } from "../hooks/useClock";
 import { useSectors } from "../hooks/useSectors";
-import { Sector } from "../types/types";
 
 const ChildScreen = () => {
     const [secondaryView, setSecondaryView] = useState(false);
@@ -24,16 +23,6 @@ const ChildScreen = () => {
     const icon = preview
         ? (isAM ? faSun : faMoon)
         : (isAM ? faMoon : faSun);
-
-    const flatEvents = events.flatMap(s =>
-        s.activeDays.map(d => ({ sector: s, start: d.start, end: d.end, name: s.name }))
-    );
-
-    const endTimes = flatEvents.map(e => e.end);
-
-    const showSector = (sector: Sector) => {
-        console.log(sector)
-    }
 
     return (
         <>
@@ -75,7 +64,7 @@ const ChildScreen = () => {
                         
                     </Svg>
 
-                    {(!preview && events && endTimes) ? ( <EventDisplay time={time} events={events} easyClock={false} endTimes={endTimes} /> ) : (<View style={{height: 120}} />)}
+                    {(!preview && events) ? ( <EventDisplay time={time} events={events} easyClock={false} /> ) : (<View style={{height: 120}} />)}
 
                     <View style={styles.previewButton}>
                         <Pressable
@@ -87,7 +76,7 @@ const ChildScreen = () => {
                     </View>
                 </View>
             ) : (
-                <EasyClock time={time} events={events} endTimes={endTimes} />
+                <EasyClock time={time} events={events} />
             )}
         </>
     );

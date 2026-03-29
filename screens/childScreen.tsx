@@ -24,12 +24,6 @@ const ChildScreen = () => {
         ? (isAM ? faSun : faMoon)
         : (isAM ? faMoon : faSun);
 
-    const flatEvents = events.flatMap(s =>
-        s.activeDays.map(d => ({ sector: s, start: d.start, end: d.end, name: s.name }))
-    );
-
-    const endTimes = flatEvents.map(e => e.end);
-
     return (
         <>
             {!settings.easyClock ? (
@@ -70,7 +64,7 @@ const ChildScreen = () => {
                         
                     </Svg>
 
-                    {(!preview && events && endTimes) ? ( <EventDisplay time={time} events={events} easyClock={false} endTimes={endTimes} /> ) : (<View style={{height: 120}} />)}
+                    {(!preview && events) ? ( <EventDisplay time={time} events={events} easyClock={false} /> ) : (<View style={{height: 120}} />)}
 
                     <View style={styles.previewButton}>
                         <Pressable
@@ -82,7 +76,7 @@ const ChildScreen = () => {
                     </View>
                 </View>
             ) : (
-                <EasyClock time={time} events={events} endTimes={endTimes} />
+                <EasyClock time={time} events={events} />
             )}
         </>
     );

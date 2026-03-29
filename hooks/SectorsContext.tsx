@@ -59,6 +59,22 @@ export const SectorsProvider = ({ children }: { children: React.ReactNode }) => 
         setAllSectors(prev => prev.filter(s => s.id !== id));
     }, []);
 
+    const deleteSectorDay = useCallback((id: number, day: Weekday) => {
+        setAllSectors(prev =>
+            prev.flatMap(s => {
+                if (s.id !== id) return s;
+
+                const newActiveDays = s.activeDays.filter(d => d.day !== day);
+
+                if (newActiveDays.length === 0) {
+                    return [];
+                }
+
+                return { ...s, activeDays: newActiveDays };
+            })
+        );
+    }, [setAllSectors]);
+
     const linearize = (start: number, end: number) => {
         if (end <= start) end += 24;
         return { start, end };
@@ -117,13 +133,10 @@ export const SectorsProvider = ({ children }: { children: React.ReactNode }) => 
     }, [sectors]);
 
     const fullDayEvents = useMemo(() => {
-        return sectors
-            .map(s => {
-                const daySchedules = s.activeDays.filter(d => d.day === selectedDay);
-                return daySchedules.length > 0 ? { ...s, activeDays: daySchedules } : null;
-            })
-            .filter((s): s is Sector => s !== null);
-    }, [sectors, selectedDay]);
+        return normalizedEvents.filter(
+            e => e.activeDays[0].day === selectedDay
+        );
+    }, [normalizedEvents, selectedDay]);
 
     const events = useMemo(() => {
         return normalizedEvents
@@ -156,13 +169,14 @@ export const SectorsProvider = ({ children }: { children: React.ReactNode }) => 
         addSector,
         updateSector,
         deleteSector,
+        deleteSectorDay,
         setAllSectors,
         preview,
         setPreview,
         events,
         amEvents,
         pmEvents,
-        fullDayEvents,
+        normalizedEvents,
         selectedDay,
         setSelectedDay
     }), [
@@ -171,7 +185,7 @@ export const SectorsProvider = ({ children }: { children: React.ReactNode }) => 
         events,
         amEvents,
         pmEvents,
-        fullDayEvents,
+        normalizedEvents,
         selectedDay,
         isAM
     ]);

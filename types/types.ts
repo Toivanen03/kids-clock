@@ -83,13 +83,14 @@ export type SectorsContextType = {
     addSector: (sector: NewSector) => void;
     updateSector: (sector: Sector) => void;
     deleteSector: (id: number) => void;
+    deleteSectorDay: (id: number, day: Weekday) => void;
     setAllSectors: (sectors: Sector[]) => void;
     preview: boolean;
     setPreview: (val: boolean) => void;
     events: Sector[];
     amEvents: Sector[];
     pmEvents: Sector[];
-    fullDayEvents: Sector[];
+    normalizedEvents: Sector[];
     selectedDay: Weekday;
     setSelectedDay: (val: Weekday) => void;
 };
@@ -98,6 +99,7 @@ export type DaySchedule = {
     day: Weekday;
     start: number;
     end: number;
+    name?: string;
 };
 
 export type Sector = {
@@ -131,13 +133,11 @@ export interface EventDisplayProps {
     time: Time;
     events: Sector[];
     easyClock: boolean;
-    endTimes: number[];
 }
 
 export interface EasyClockProps {
     time: Time;
     events: Sector[];
-    endTimes: number[]
 };
 
 export interface AnalogNumberProps {
